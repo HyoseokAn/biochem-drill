@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>생합성 경로 연습장</title>
+<meta name="theme-color" content="#F1F4F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F161A" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="대사 연습장">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+.offline-badge{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));font:12px/1.3 system-ui,sans-serif;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--muted);border:1px solid var(--rule);opacity:.95}
+</style>
+</head>
+<body>
+<style>
+/* Layout: one-column workbook. Module switcher → view tabs → the active drill.
+   Pathway steps run down a numbered rail like a wall-chart; each module keeps its own pathway colour. */
+:root{
+  --bg:#F1F4F3; --surface:#FFFFFF; --soft:#E6ECEA; --ink:#15212A; --muted:#56666D; --rule:#D2DBD9;
+  --ok:#23704A; --ok-bg:#E1F1E7; --bad:#AE3530; --bad-bg:#F7E3E1;
+  --m-ser:#2C8556; --m-one:#BC5D18; --m-met:#937107; --m-pyr:#2A67AA; --m-pur:#AF3838; --m-mix:#4B5B64; --m-ppp:#0E7882; --m-fa:#963A7E; --m-chol:#4A4FAE; --m-neaa:#5A7A1C; --m-urea:#8A5838; --m-glyc:#A6421F; --m-tca:#1F6E8C; --m-oxphos:#7B3FA0; --m-fao:#A8730E; --m-ketone:#3E7D5E; --m-gng:#4F6FA8; --m-glycogen:#86661C; --m-tag:#A23B5C; --m-eico:#BA4528; --m-steroid:#6A5A9E; --m-aacat:#3F7A3A; --m-aader:#8A4F9C; --m-heme:#A8322F; --m-nucdeg:#56697F;
+  --s-asp:#2A67AA; --s-gly:#2C8556; --s-gln:#7A4DAE; --s-co2:#5F6C7D; --s-fthf:#BC5D18; --on-src:#FFFFFF;
+  --f-display:"Gowun Batang","Noto Serif KR","AppleMyungjo","Batang",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F161A; --surface:#162026; --soft:#1E2A31; --ink:#E3EBEB; --muted:#98A9AF; --rule:#2B3A41;
+    --ok:#7FD3A2; --ok-bg:#16322A; --bad:#F2928B; --bad-bg:#3A1F1E;
+    --m-ser:#6FCB98; --m-one:#F0A061; --m-met:#E2C14F; --m-pyr:#7FB1EC; --m-pur:#F08C82; --m-mix:#A9B8BF; --m-ppp:#5CC6CF; --m-fa:#E58ACB; --m-chol:#A3A7F2; --m-neaa:#B2D36A; --m-urea:#DDA27F; --m-glyc:#F29A7A; --m-tca:#74C0E0; --m-oxphos:#C79AE6; --m-fao:#EBC060; --m-ketone:#86CFAA; --m-gng:#9DB6EA; --m-glycogen:#D9B866; --m-tag:#F08FAE; --m-eico:#F59A80; --m-steroid:#B7A8EC; --m-aacat:#8FD08A; --m-aader:#D6A0E6; --m-heme:#F28B85; --m-nucdeg:#A9BCD3;
+    --s-asp:#7FB1EC; --s-gly:#6FCB98; --s-gln:#BD98EA; --s-co2:#A7B3C2; --s-fthf:#F0A061; --on-src:#0F161A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F161A; --surface:#162026; --soft:#1E2A31; --ink:#E3EBEB; --muted:#98A9AF; --rule:#2B3A41;
+  --ok:#7FD3A2; --ok-bg:#16322A; --bad:#F2928B; --bad-bg:#3A1F1E;
+  --m-ser:#6FCB98; --m-one:#F0A061; --m-met:#E2C14F; --m-pyr:#7FB1EC; --m-pur:#F08C82; --m-mix:#A9B8BF; --m-ppp:#5CC6CF; --m-fa:#E58ACB; --m-chol:#A3A7F2; --m-neaa:#B2D36A; --m-urea:#DDA27F; --m-glyc:#F29A7A; --m-tca:#74C0E0; --m-oxphos:#C79AE6; --m-fao:#EBC060; --m-ketone:#86CFAA; --m-gng:#9DB6EA; --m-glycogen:#D9B866; --m-tag:#F08FAE; --m-eico:#F59A80; --m-steroid:#B7A8EC; --m-aacat:#8FD08A; --m-aader:#D6A0E6; --m-heme:#F28B85; --m-nucdeg:#A9BCD3;
+  --s-asp:#7FB1EC; --s-gly:#6FCB98; --s-gln:#BD98EA; --s-co2:#A7B3C2; --s-fthf:#F0A061; --on-src:#0F161A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:28px 72px}
+@media (max-width:480px){.wrap{padding-inline:16px}}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--m, var(--ink));outline-offset:2px;border-radius:4px}
+
+header.top{display:grid;gap:6px;margin-bottom:22px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,38px);line-height:1.2;margin:0;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:62ch}
+
+.mods{display:grid;gap:10px;margin-bottom:28px}
+.modgrp{display:grid;grid-template-columns:150px minmax(0,1fr);gap:6px 12px;align-items:center}
+@media (max-width:640px){.modgrp{grid-template-columns:minmax(0,1fr)}}
+.grplbl{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.modrow{display:flex;flex-wrap:wrap;gap:8px}
+.mod{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--rule);background:var(--surface);border-radius:999px;cursor:pointer;font-size:14px;line-height:1.3}
+.mod .dot{width:9px;height:9px;border-radius:50%;background:var(--mc);flex:none}
+.mod[aria-pressed="true"]{border-color:var(--mc);box-shadow:inset 0 0 0 1px var(--mc);font-weight:600}
+
+.modhead{display:grid;gap:6px;margin-bottom:14px}
+.modhead h2{font-family:var(--f-display);font-size:clamp(22px,3.6vw,28px);margin:0;line-height:1.25;color:var(--ink);text-wrap:balance}
+.modhead h2 .code{font-family:var(--f-mono);font-size:13px;font-weight:500;color:var(--m);margin-right:10px;letter-spacing:.04em;vertical-align:3px}
+.modhead p{margin:0;color:var(--muted);max-width:68ch}
+
+.views{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:22px;overflow-x:auto;scrollbar-width:thin}
+.view{background:none;border:0;border-bottom:2px solid transparent;padding:10px 12px 9px;cursor:pointer;color:var(--muted);white-space:nowrap;font-size:14.5px}
+.view[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--m);font-weight:600}
+
+.keys{margin:0 0 22px;padding:14px 18px;background:var(--soft);border-radius:8px;display:grid;gap:4px}
+.keys h3{margin:0 0 2px;font-size:13px;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.keys ul{margin:0;padding-left:18px;display:grid;gap:3px}
+
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.toolbar .hint{color:var(--muted);font-size:13.5px}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;user-select:none}
+.switch input{accent-color:var(--m);width:16px;height:16px}
+
+.rail{list-style:none;margin:0 0 30px;padding:0}
+.step{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;position:relative;padding-bottom:16px}
+.step:not(:last-child)::before{content:"";position:absolute;left:19px;top:34px;bottom:0;width:2px;background:var(--rule)}
+.num{width:34px;height:34px;border-radius:50%;border:2px solid var(--m);color:var(--m);display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:14px;background:var(--surface);position:relative;z-index:1}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;display:grid;gap:8px;min-width:0}
+.rx{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-weight:500;font-size:15.5px}
+.rx .arrow{color:var(--m);font-family:var(--f-mono)}
+.enz{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.enz .sym{font-family:var(--f-mono);font-weight:600;color:var(--m);font-size:15px}
+.enz .dom{font-size:13px;color:var(--ink)}
+.enz .full{color:var(--muted);font-size:13.5px}
+.enz .ec{font-family:var(--f-mono);font-size:12px;color:var(--muted);border:1px solid var(--rule);border-radius:4px;padding:0 6px}
+.reveal{justify-self:start;background:var(--soft);border:1px dashed var(--muted);border-radius:6px;padding:4px 12px;cursor:pointer;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;padding:2px 8px;border-radius:4px;background:var(--soft);color:var(--ink)}
+.chip.loc{background:transparent;border:1px solid var(--rule);color:var(--muted)}
+.chip.atom{background:transparent;border:1px solid var(--m);color:var(--m);font-family:var(--f-mono)}
+.note{margin:0;color:var(--muted);font-size:13.8px}
+
+h3.sec{font-family:var(--f-display);font-size:19px;margin:8px 0 12px;font-weight:700}
+.side{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:18px}
+.notes{margin:0;padding:12px 16px;border-left:3px solid var(--m);background:var(--surface);border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+
+/* quiz */
+.qcard{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:20px;display:grid;gap:14px;max-width:720px}
+.qmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qmeta .tag{color:var(--m)}
+.rxq{margin:0;font-family:var(--f-mono);font-size:14.5px;background:var(--soft);padding:10px 12px;border-radius:8px;overflow-wrap:anywhere}
+.q{margin:0;font-size:17px;font-weight:500;text-wrap:pretty}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;cursor:pointer;line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--m)}
+.opt:disabled{cursor:default;opacity:1}
+.opt.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ink)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--ink)}
+.explain{padding:12px 14px;border-radius:8px;background:var(--ok-bg);font-size:14.5px}
+.explain.is-bad{background:var(--bad-bg)}
+.explain strong{color:var(--ok)}
+.explain.is-bad strong{color:var(--bad)}
+.qnav{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--rule);background:var(--surface);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14.5px}
+.btn.primary{background:var(--m);border-color:var(--m);color:var(--bg);font-weight:600}
+.result .big{font-family:var(--f-display);font-size:40px;margin:0;font-variant-numeric:tabular-nums}
+.muted{color:var(--muted);margin:0}
+
+/* order drill */
+.order{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:700px){.order{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:grid;gap:10px;min-width:0}
+.panel h4{margin:0;font-size:13px;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.seq{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.seq li.met{padding:7px 12px;border:1px solid var(--m);border-radius:8px;background:var(--bg)}
+.seq li.via{font-family:var(--f-mono);font-size:12.5px;color:var(--m);padding:3px 0 3px 18px}
+.seq .empty{color:var(--muted);font-size:14px}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.tok{display:grid;text-align:left;gap:0;padding:7px 12px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);cursor:pointer;line-height:1.35}
+.tok:hover{border-color:var(--m)}
+.tok.shake{border-color:var(--bad);background:var(--bad-bg)}
+.met .t,.tok .t{font-weight:500}
+.met .f,.tok .f{font-size:12px;color:var(--muted)}
+.status{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.status.done{color:var(--ok);font-weight:600}
+
+/* atoms */
+.atoms{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.ringbox{flex:1 1 300px;min-width:0;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px}
+.ringbox svg{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
+.atompanel{flex:1 1 280px;min-width:0;display:grid;gap:12px}
+svg .bond{stroke:var(--muted);stroke-width:2.2;fill:none}
+svg .stub{stroke:var(--muted);stroke-width:1.6;stroke-dasharray:4 3;fill:none}
+svg .lbl{fill:var(--muted);font-family:var(--f-body);font-size:12px}
+svg .atom circle{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+svg .atom text{fill:var(--ink);font-family:var(--f-mono);font-size:12.5px;font-weight:600;pointer-events:none}
+svg .atom.cur circle{stroke:var(--m);stroke-width:3}
+svg .atom.done text{fill:var(--on-src)}
+svg .atom.done circle{stroke:none}
+.srcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.src{display:flex;align-items:center;gap:8px;text-align:left;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);cursor:pointer}
+.src .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.src:hover:not(:disabled){border-color:var(--m)}
+.src.ok{background:var(--ok-bg);border-color:var(--ok)}
+.src.bad{background:var(--bad-bg);border-color:var(--bad)}
+.src:disabled{cursor:default}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.prompt{font-size:17px;font-weight:500;margin:0}
+.prompt b{font-family:var(--f-mono);color:var(--m)}
+footer.foot{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Metabolism drill · 24 pathways</div>
+    <h1>생합성 경로 연습장</h1>
+    <p class="lede">학부 생화학의 대사 경로(식물 제외)를 경로 지도로 훑고, 순서를 직접 맞추고, 효소와 개념 문제로 확인합니다. 퓨린·피리미딘은 고리의 원자가 어디서 왔는지도 맞혀 봅니다.</p>
+  </header>
+  <nav class="mods" id="mods" aria-label="경로 선택"></nav>
+  <section id="module" aria-live="polite"></section>
+  <footer class="foot">효소 번호는 EC(Enzyme Commission) 번호입니다. 필수 아미노산 합성과 질소 고정은 세균·식물 경로라 넣지 않았습니다. 퀴즈 기록은 이 브라우저에만 저장됩니다.</footer>
+</div>
+
+<script>
+const SRC = {
+  asp:{t:'아스파르트산', v:'--s-asp'},
+  gly:{t:'글리신', v:'--s-gly'},
+  gln:{t:'글루타민 (아미드 N)', v:'--s-gln'},
+  co2:{t:'CO₂ / HCO₃⁻', v:'--s-co2'},
+  fthf:{t:'10-포르밀-THF', v:'--s-fthf'}
+};
+
+const MODS = [
+{
+  id:'ser', grp:'nuc', code:'SER', title:'세린 · 글리신 · 트레오닌', short:'세린·글리신·트레오닌', color:'--m-ser',
+  intro:'해당과정 중간산물 3-PG(3-phosphoglycerate)에서 세린을 만들고, 세린과 글리신을 쪼개 1탄소 단위를 얻습니다. 1탄소 대사의 입구입니다.',
+  keys:['3-PG → 세린은 3단계: PHGDH(NAD⁺ 사용) · PSAT1(글루탐산 → α-KG) · PSPH',
+        '세린의 β-탄소는 SHMT로, 글리신의 α-탄소는 GCS(glycine cleavage system)로 1탄소 단위가 됨',
+        '사람은 트레오닌을 SDS로 분해 (TDH는 위유전자)'],
+  steps:[
+    {e:'PHGDH', ef:'phosphoglycerate dehydrogenase', ec:'1.1.1.95', s:'3-PG (3-phosphoglycerate)', p:'3-PHP (3-phosphohydroxypyruvate)', co:['NAD⁺ → NADH'], loc:'세포질', n:'해당과정에서 갈라지는 첫 단계이자 흐름 조절점. ER 음성 유방암과 흑색종 일부에서 유전자가 증폭돼 있습니다.'},
+    {e:'PSAT1', ef:'phosphoserine aminotransferase 1', ec:'2.6.1.52', s:'3-PHP', p:'3-포스포세린 (3-phosphoserine)', co:['글루탐산 → α-KG','PLP'], loc:'세포질', n:'부산물 α-KG(α-ketoglutarate)가 TCA(tricarboxylic acid) 회로로 들어갑니다.'},
+    {e:'PSPH', ef:'phosphoserine phosphatase', ec:'3.1.3.3', s:'3-포스포세린', p:'L-세린', co:['H₂O → Pi'], loc:'세포질', n:'비가역 탈인산화로 경로를 마무리합니다.'},
+    {e:'SHMT1/2', ef:'serine hydroxymethyltransferase (1: 세포질, 2: 미토콘드리아)', ec:'2.1.2.1', s:'L-세린 + THF (tetrahydrofolate)', p:'글리신 + 5,10-메틸렌-THF', co:['PLP (pyridoxal phosphate)'], loc:'세포질 · 미토콘드리아', n:'세린의 β-탄소가 THF로 넘어가 1탄소 단위가 됩니다. 가역 반응이라 방향은 세포 상태가 정합니다.'},
+    {e:'GCS', ef:'glycine cleavage system: GLDC(P) · AMT(T) · GCSH(H) · DLD(L)', ec:'1.4.4.2', s:'글리신 + THF', p:'CO₂ + NH₄⁺ + 5,10-메틸렌-THF', co:['NAD⁺ → NADH','PLP (GLDC)','리포산 (GCSH)'], loc:'미토콘드리아', n:'글리신의 카복실 탄소는 CO₂로, α-탄소는 1탄소 단위로 갑니다. 폐암 tumor-initiating 세포에서 GLDC가 높다는 보고가 있습니다(Zhang 2012, Cell).'}
+  ],
+  side:[
+    {e:'SDS', ef:'serine dehydratase (L-serine/L-threonine ammonia-lyase)', ec:'4.3.1.17', s:'L-트레오닌', p:'2-옥소부티르산 + NH₄⁺', co:['PLP'], loc:'세포질 (주로 간)', n:'사람 트레오닌 분해의 주 경로. 2-옥소부티르산은 propionyl-CoA를 거쳐 숙시닐-CoA가 됩니다. 같은 효소가 세린을 피루브산으로도 바꿉니다.'},
+    {e:'TDH', ef:'L-threonine 3-dehydrogenase', ec:'1.1.1.103', s:'L-트레오닌', p:'2-아미노-3-케토부티르산', co:['NAD⁺ → NADH'], loc:'미토콘드리아 (생쥐)', n:'사람 TDH는 위유전자(pseudogene)입니다. 생쥐 배아줄기세포는 이 경로로 SAM과 히스톤 메틸화를 유지합니다(Shyh-Chang 2013, Science).'},
+    {e:'GCAT', ef:'glycine C-acetyltransferase', ec:'2.3.1.29', s:'2-아미노-3-케토부티르산 + CoA', p:'글리신 + acetyl-CoA', co:[], loc:'미토콘드리아', n:'TDH와 짝을 이뤄 트레오닌을 글리신으로 바꿉니다.'},
+    {e:'SPTLC1/2', ef:'serine palmitoyltransferase', ec:'2.3.1.50', s:'L-세린 + 팔미토일-CoA', p:'3-케토디하이드로스핑고신 + CO₂', co:['PLP'], loc:'소포체', n:'스핑고지질 합성의 첫 단계. 세린이 부족하면 알라닌을 대신 써서 deoxysphingolipid가 생깁니다(Muthusamy 2020, Nature).'}
+  ],
+  notes:[],
+  order:[{t:'3-PG',f:'3-phosphoglycerate'},{t:'3-PHP',f:'3-phosphohydroxypyruvate'},{t:'3-포스포세린',f:'3-phosphoserine'},{t:'세린',f:'L-serine'},{t:'글리신',f:'glycine'},{t:'CO₂ + NH₄⁺ + 1탄소 단위',f:'5,10-메틸렌-THF로'}],
+  via:['PHGDH','PSAT1','PSPH','SHMT','GCS'],
+  quiz:[
+    {q:'PHGDH 반응에서 생기는 환원 당량은?', opts:['NADH','NADPH','FADH₂','환원형 CoQ'], ex:'PHGDH는 NAD⁺를 써서 3-PG를 산화합니다. 세린 합성이 빠른 세포는 세포질 NAD⁺ 재생 부담도 커집니다.'},
+    {q:'PSAT1 반응의 아미노기 공여체와 그 부산물은?', opts:['글루탐산 → α-KG','글루타민 → 글루탐산','아스파르트산 → 옥살아세트산','알라닌 → 피루브산'], ex:'글루탐산의 아미노기를 받아 α-KG가 나옵니다. 그래서 세린 합성 흐름은 TCA 회로에 α-KG를 보충하는 통로도 됩니다(Possemato 2011, Nature).'},
+    {q:'SHMT의 보조인자는?', opts:['PLP (pyridoxal phosphate)','TPP (thiamine pyrophosphate)','비오틴','리포산'], ex:'SHMT는 PLP 효소입니다. 세린의 β-탄소를 THF로 옮겨 5,10-메틸렌-THF를 만듭니다.'},
+    {q:'글리신 절단계(GCS)에 대한 설명으로 옳은 것은?', opts:['미토콘드리아에서 글리신을 CO₂, NH₄⁺, 1탄소 단위로 쪼갠다','세포질에서 글리신을 세린으로 바꾼다','ATP를 소비해 글리신을 합성한다','소포체에서 글리신을 GSH에 붙인다'], ex:'GLDC(P), AMT(T), GCSH(H, 리포산 결합), DLD(L) 네 단백질로 된 복합체입니다. 결손되면 비케톤성 고글리신혈증이 생깁니다.'},
+    {q:'사람에서 트레오닌이 주로 분해되는 경로는?', opts:['SDS가 2-옥소부티르산으로 바꾼다','TDH가 2-아미노-3-케토부티르산으로 바꾼 뒤 글리신이 된다','아미노기 전이로 α-KG가 된다','요소 회로로 들어간다'], ex:'사람 TDH는 위유전자라 TDH–GCAT 경로가 거의 없습니다. 생쥐 배아줄기세포는 이 경로로 글리신과 acetyl-CoA를 얻습니다(Shyh-Chang 2013, Science).'},
+    {q:'세린을 직접 재료로 쓰지 않는 것은?', opts:['콜레스테롤','스핑고지질','포스파티딜세린','시스테인 (황전이)'], ex:'스핑고지질은 SPT가 세린 + 팔미토일-CoA로 시작하고, 시스테인은 CBS가 세린 + 호모시스테인으로 만듭니다. 콜레스테롤은 acetyl-CoA에서 메발론산 경로로 만듭니다.'},
+    {q:'PHGDH 유전자 증폭과 의존성이 처음 보고된 암 조합은?', opts:['ER 음성 유방암과 흑색종','교모세포종과 대장암','전립선암과 췌장암','백혈병과 림프종'], ex:'2011년 Possemato(Nature)가 유방암, Locasale(Nature Genetics)가 흑색종에서 보고했습니다.'}
+  ]
+},
+{
+  id:'one', grp:'nuc', code:'1C', title:'1탄소 대사 (엽산 회로)', short:'1탄소 대사', color:'--m-one',
+  intro:'THF(tetrahydrofolate)가 1탄소 단위를 실어 나릅니다. 증식 세포에서는 미토콘드리아가 세린을 포름산으로 바꿔 내보내고, 세포질이 그 포름산으로 퓨린·dTMP·메틸기를 만듭니다.',
+  keys:['미토콘드리아: 세린 → (SHMT2 → MTHFD2 → MTHFD1L) → 포름산. 세포질: 포름산 → (MTHFD1) → 10-포르밀-THF',
+        '10-포르밀-THF → 퓨린 C2·C8 / 5,10-메틸렌-THF → dTMP / 5-메틸-THF → 메티오닌',
+        '항엽산제: 메토트렉세이트(DHFR), pemetrexed(TYMS·DHFR·GART), 5-FU(TYMS)'],
+  steps:[
+    {e:'SHMT2', ef:'serine hydroxymethyltransferase 2', ec:'2.1.2.1', s:'L-세린 + THF', p:'글리신 + 5,10-메틸렌-THF', co:['PLP'], loc:'미토콘드리아', n:'증식 세포에서 1탄소 단위 대부분이 여기서 시작합니다.'},
+    {e:'MTHFD2', dom:'탈수소효소 활성', ef:'methylenetetrahydrofolate dehydrogenase 2', ec:'1.5.1.15', s:'5,10-메틸렌-THF', p:'5,10-메테닐-THF', co:['NAD⁺ → NADH'], loc:'미토콘드리아', n:'배아와 암에서 높고 정상 성인 조직에서는 낮은 효소입니다(Nilsson 2014, Nature Communications).'},
+    {e:'MTHFD2', dom:'고리가수분해효소 활성', ef:'methenyltetrahydrofolate cyclohydrolase', ec:'3.5.4.9', s:'5,10-메테닐-THF + H₂O', p:'10-포르밀-THF', co:[], loc:'미토콘드리아', n:'같은 효소의 두 번째 활성입니다.'},
+    {e:'MTHFD1L', ef:'methylenetetrahydrofolate dehydrogenase 1-like (10-formyl-THF synthetase)', ec:'6.3.4.3', s:'10-포르밀-THF + ADP + Pi', p:'포름산 + THF + ATP', co:['ATP 생성'], loc:'미토콘드리아', n:'합성효소 반응을 역방향으로 돌립니다. 포름산은 막을 통과해 세포질로 나갑니다.'},
+    {e:'MTHFD1', dom:'합성효소 활성', ef:'methylenetetrahydrofolate dehydrogenase 1 (3기능 효소)', ec:'6.3.4.3', s:'포름산 + THF + ATP', p:'10-포르밀-THF + ADP + Pi', co:['ATP 소모'], loc:'세포질', n:'세포질에서 1탄소 단위를 다시 싣습니다. 같은 효소의 고리가수분해효소·탈수소효소 활성으로 메틸렌-THF까지 환원할 수도 있습니다(NADPH 소모).'},
+    {e:'GART · ATIC', ef:'퓨린 합성 3단계(GAR transformylase)와 9단계(AICAR transformylase)', ec:'2.1.2.2 · 2.1.2.3', s:'10-포르밀-THF + GAR / AICAR', p:'퓨린 고리의 C8 · C2 + THF', co:[], loc:'세포질', n:'1탄소 단위의 첫 번째 행선지입니다. 퓨린 탭에서 이어집니다.'}
+  ],
+  side:[
+    {e:'TYMS', ef:'thymidylate synthase', ec:'2.1.1.45', s:'dUMP + 5,10-메틸렌-THF', p:'dTMP + DHF (dihydrofolate)', co:[], loc:'세포질 · 핵', n:'메틸렌기를 주면서 THF가 DHF로 산화됩니다. 5-FU와 pemetrexed의 표적.'},
+    {e:'DHFR', ef:'dihydrofolate reductase', ec:'1.5.1.3', s:'DHF + NADPH', p:'THF + NADP⁺', co:['NADPH'], loc:'세포질', n:'TYMS 뒤 THF를 되살리고, 식이 엽산도 이 효소로 활성형이 됩니다. 메토트렉세이트의 표적.'},
+    {e:'MTHFR', ef:'methylenetetrahydrofolate reductase', ec:'1.5.1.20', s:'5,10-메틸렌-THF + NADPH', p:'5-메틸-THF', co:['NADPH','FAD'], loc:'세포질', n:'세포 안에서 사실상 비가역입니다. SAM이 억제합니다.'},
+    {e:'MTR', ef:'methionine synthase', ec:'2.1.1.13', s:'5-메틸-THF + 호모시스테인', p:'THF + 메티오닌', co:['메틸코발라민 (비타민 B12)'], loc:'세포질', n:'5-메틸-THF를 쓰는 유일한 효소. B12가 부족하면 엽산이 5-메틸 형태에 갇힙니다(methyl trap).'},
+    {e:'ALDH1L1/2', ef:'10-formyltetrahydrofolate dehydrogenase (1: 세포질, 2: 미토콘드리아)', ec:'1.5.1.6', s:'10-포르밀-THF + NADP⁺', p:'CO₂ + THF + NADPH', co:['NADP⁺ → NADPH'], loc:'세포질 · 미토콘드리아', n:'1탄소 단위를 태워 NADPH를 얻습니다. 흑색종 전이 중 산화 스트레스 대응에 쓰입니다(Piskounova 2015, Nature).'}
+  ],
+  notes:[],
+  order:[{t:'세린',f:'미토콘드리아'},{t:'5,10-메틸렌-THF',f:'methylene-tetrahydrofolate'},{t:'5,10-메테닐-THF',f:'methenyl-tetrahydrofolate'},{t:'10-포르밀-THF',f:'미토콘드리아'},{t:'포름산',f:'formate, 막 통과'},{t:'10-포르밀-THF',f:'세포질'},{t:'퓨린 C2 · C8',f:'purine ring carbons'}],
+  via:['SHMT2','MTHFD2 (탈수소효소)','MTHFD2 (고리가수분해효소)','MTHFD1L','MTHFD1 (합성효소)','GART · ATIC'],
+  quiz:[
+    {q:'증식하는 암세포에서 세포질 1탄소 단위의 주 공급원은?', opts:['미토콘드리아에서 만들어 내보낸 포름산','세포질 SHMT1이 만든 메틸렌-THF','식이 엽산 그 자체','메티오닌에서 떨어진 메틸기'], ex:'SHMT2 → MTHFD2 → MTHFD1L이 세린을 포름산으로 바꾸고, 세포질 MTHFD1이 다시 10-포르밀-THF로 씁니다. 미토콘드리아 경로를 끄면 세포질 SHMT1이 역방향으로 돌아 보상합니다(Ducker 2016, Cell Metabolism).'},
+    {q:'MTHFD2의 특징으로 옳은 것은?', opts:['배아·암에서 높고 정상 성인 조직에서는 낮다','모든 조직에서 균일하게 높다','세포질에만 있다','NADPH만 만든다'], ex:'여러 암 전사체 비교에서 가장 일관되게 높은 대사 효소 중 하나로 꼽혔습니다(Nilsson 2014). 미토콘드리아 효소이고 주로 NAD⁺를 씁니다.'},
+    {q:'메토트렉세이트가 직접 억제하는 주 표적은?', opts:['DHFR','TYMS','MTHFR','SHMT2'], ex:'DHFR이 막히면 DHF가 쌓이고 THF가 고갈돼, 퓨린 합성(GART·ATIC)과 dTMP 합성(TYMS)이 함께 멈춥니다.'},
+    {q:'10-포르밀-THF가 탄소를 주는 퓨린 고리의 위치는?', opts:['C2와 C8','C4와 C5','C6','N1과 N3'], ex:'C8은 GART(3단계), C2는 ATIC(9단계)가 넣습니다. C4·C5는 글리신, C6은 CO₂, N1은 아스파르트산, N3·N9는 글루타민입니다.'},
+    {q:'MTHFR 반응에 대한 설명으로 옳은 것은?', opts:['5,10-메틸렌-THF를 5-메틸-THF로 바꾸며 세포 안에서는 사실상 비가역이다','5-메틸-THF를 THF로 되돌린다','ATP를 만든다','B12가 보조인자다'], ex:'NADPH를 쓰고 SAM이 억제합니다. 5-메틸-THF는 MTR(B12 의존)만 쓸 수 있어서, B12가 부족하면 엽산이 5-메틸 형태에 갇힙니다.'},
+    {q:'미토콘드리아 MTHFD1L이 10-포르밀-THF를 포름산으로 바꿀 때 함께 생기는 것은?', opts:['ATP','NADPH','CO₂','글리신'], ex:'합성효소 반응을 역방향으로 돌려 ADP + Pi → ATP를 만듭니다. 세포질 MTHFD1은 반대로 ATP를 써서 포름산을 다시 붙입니다.'},
+    {q:'ALDH1L1/2 반응의 생리적 의미는?', opts:['10-포르밀-THF를 CO₂로 산화하며 NADPH를 만든다','퓨린에 탄소를 붙인다','메티오닌을 재생한다','dTMP를 만든다'], ex:'1탄소 단위를 태워 NADPH를 얻습니다. 흑색종 전이에서 산화 스트레스를 견디는 데 중요하다는 보고가 있습니다(Piskounova 2015, Nature).'},
+    {q:'TYMS 반응 뒤 엽산 보조인자는 어떤 형태로 남는가?', opts:['DHF (dihydrofolate)','THF','5-메틸-THF','10-포르밀-THF'], ex:'TYMS는 메틸렌기를 주면서 THF를 DHF로 산화합니다. 그래서 TYMS가 돌 때마다 DHFR이 필요합니다.'}
+  ]
+},
+{
+  id:'met', grp:'nuc', code:'S', title:'메티오닌 회로 · 황전이 · 타우린', short:'메티오닌·황전이·타우린', color:'--m-met',
+  intro:'메티오닌은 SAM으로 메틸기를 주고 호모시스테인이 됩니다. 호모시스테인은 다시 메티오닌이 되거나, 황전이(transsulfuration)로 시스테인이 되어 GSH나 타우린으로 갑니다.',
+  keys:['메티오닌 회로: 메티오닌 → SAM → SAH → 호모시스테인 → (MTR · BHMT) → 메티오닌',
+        '황전이: 호모시스테인 + 세린 → (CBS) 시스타티오닌 → (CTH) 시스테인',
+        '시스테인 갈림길: GSH (GCL → GSS) vs 타우린 (CDO1 → CSAD → FMO1)'],
+  steps:[
+    {e:'MAT2A', ef:'methionine adenosyltransferase 2A (간은 MAT1A)', ec:'2.5.1.6', s:'L-메티오닌 + ATP', p:'SAM (S-adenosylmethionine) + PPi + Pi', co:['ATP 삼인산 전부 소모'], loc:'세포질 · 핵', n:'MTAP 결손 암은 MTA가 쌓여 PRMT5가 약해지고, 그래서 MAT2A·PRMT5 억제에 민감합니다.'},
+    {e:'메틸전이효소', ef:'DNMT, 히스톤 메틸전이효소, PRMT, PEMT 등 200여 종', ec:'2.1.1.-', s:'SAM + 메틸 수용체', p:'SAH (S-adenosylhomocysteine) + 메틸화 산물', co:[], loc:'핵 · 세포질', n:'SAM/SAH 비율이 메틸화 잠재력입니다. SAH는 대부분의 메틸전이효소를 강하게 억제합니다.'},
+    {e:'AHCY', ef:'adenosylhomocysteinase (SAH hydrolase)', ec:'3.13.2.1', s:'SAH + H₂O', p:'호모시스테인 + 아데노신', co:['NAD⁺ (단단히 결합)'], loc:'세포질', n:'평형은 SAH 합성 쪽에 있어서 생성물이 빨리 치워져야 앞으로 갑니다.'},
+    {e:'CBS', ef:'cystathionine β-synthase', ec:'4.2.1.22', s:'호모시스테인 + L-세린', p:'시스타티오닌 + H₂O', co:['PLP','헴'], loc:'세포질', n:'황전이의 비가역 첫 단계. SAM이 알로스테릭 활성화합니다.'},
+    {e:'CTH', ef:'cystathionine γ-lyase (CSE)', ec:'4.4.1.1', s:'시스타티오닌 + H₂O', p:'L-시스테인 + α-케토부티르산 + NH₄⁺', co:['PLP'], loc:'세포질', n:'시스테인의 황은 메티오닌에서, 탄소 골격과 아미노기는 세린에서 옵니다. CBS·CTH는 황화수소(H₂S)도 만듭니다.'},
+    {e:'CDO1', ef:'cysteine dioxygenase 1', ec:'1.13.11.20', s:'L-시스테인 + O₂', p:'시스테인 설핀산 (cysteine sulfinic acid)', co:['Fe²⁺'], loc:'세포질', n:'시스테인을 GSH 대신 타우린·황산 쪽으로 보내는 갈림길. NRF2가 활성화된 폐암에서는 CDO1이 침묵됩니다(Kang 2019, eLife).'},
+    {e:'CSAD', ef:'cysteine sulfinic acid decarboxylase', ec:'4.1.1.29', s:'시스테인 설핀산', p:'하이포타우린 + CO₂', co:['PLP'], loc:'세포질', n:'대신 아미노기 전이가 일어나면 피루브산과 아황산(SO₃²⁻)으로 갑니다.'},
+    {e:'FMO1', ef:'flavin-containing monooxygenase 1', ec:'1.14.13.8', s:'하이포타우린 + NADPH + O₂', p:'타우린', co:['FAD','NADPH'], loc:'소포체 막', n:'오래 미확인이던 마지막 단계입니다. FMO1이 이 반응을 촉매한다는 2020년 보고가 있지만, 생체 안에서 얼마나 기여하는지는 아직 연구 중입니다.'}
+  ],
+  side:[
+    {e:'MTR', ef:'methionine synthase', ec:'2.1.1.13', s:'호모시스테인 + 5-메틸-THF', p:'메티오닌 + THF', co:['메틸코발라민 (비타민 B12)'], loc:'세포질', n:'재메틸화. 1탄소 대사와 메티오닌 회로를 잇는 다리입니다.'},
+    {e:'BHMT', ef:'betaine–homocysteine S-methyltransferase', ec:'2.1.1.5', s:'호모시스테인 + 베타인', p:'메티오닌 + 디메틸글리신', co:['Zn²⁺'], loc:'간 · 신장', n:'엽산과 무관한 두 번째 재메틸화 경로. 베타인은 콜린에서 옵니다.'},
+    {e:'SLC7A11', ef:'xCT (system xc⁻ 시스틴/글루탐산 역수송체)', ec:'수송체', s:'세포 밖 시스틴 + 세포 안 글루탐산', p:'세포 안 시스틴 → (환원) 시스테인 2분자', co:['NADPH (환원 단계)'], loc:'원형질막', n:'대부분 암세포의 주된 시스테인 공급원. 막히면 페롭토시스가 일어날 수 있습니다.'},
+    {e:'GCL', ef:'glutamate–cysteine ligase (GCLC 촉매 + GCLM 조절 소단위)', ec:'6.3.2.2', s:'글루탐산 + 시스테인 + ATP', p:'γ-글루타밀시스테인', co:['ATP'], loc:'세포질', n:'GSH(glutathione) 합성의 율속 단계. GSH가 되먹임 억제합니다.'},
+    {e:'GSS', ef:'glutathione synthetase', ec:'6.3.2.3', s:'γ-글루타밀시스테인 + 글리신 + ATP', p:'GSH', co:['ATP'], loc:'세포질', n:'GSH 완성. 글리신 공급도 필요합니다.'},
+    {e:'ADO', ef:'2-aminoethanethiol (cysteamine) dioxygenase', ec:'1.13.11.19', s:'시스테아민 + O₂', p:'하이포타우린', co:['Fe²⁺'], loc:'세포질', n:'CoA 분해 산물에서 하이포타우린으로 가는 보조 경로입니다.'}
+  ],
+  notes:[],
+  order:[{t:'메티오닌',f:'L-methionine'},{t:'SAM',f:'S-adenosylmethionine'},{t:'SAH',f:'S-adenosylhomocysteine'},{t:'호모시스테인',f:'homocysteine'},{t:'시스타티오닌',f:'cystathionine'},{t:'시스테인',f:'L-cysteine'},{t:'시스테인 설핀산',f:'cysteine sulfinic acid'},{t:'하이포타우린',f:'hypotaurine'},{t:'타우린',f:'taurine'}],
+  via:['MAT2A','메틸전이효소','AHCY','CBS (+ 세린)','CTH','CDO1','CSAD','FMO1'],
+  quiz:[
+    {q:'MAT2A가 SAM을 만들 때 ATP에서 떨어져 나가는 것은?', opts:['삼인산 전체 (PPi + Pi)','인산 하나 (ADP 생성)','아데닌','리보스'], ex:'메티오닌의 황이 ATP의 5′ 탄소를 공격해 아데노실기가 통째로 붙고, 삼인산은 PPi + Pi로 떨어집니다.'},
+    {q:'메틸화 잠재력(methylation potential)을 가장 잘 나타내는 지표는?', opts:['SAM/SAH 비율','메티오닌 농도','호모시스테인 농도','ATP/ADP 비율'], ex:'SAH는 대부분의 메틸전이효소를 강하게 억제하므로 SAM 절대량보다 SAM/SAH 비율이 중요합니다.'},
+    {q:'AHCY 반응(SAH → 호모시스테인 + 아데노신)의 평형은?', opts:['SAH 합성 쪽이어서 생성물이 빨리 치워져야 진행된다','가수분해 쪽으로 강하게 치우쳐 있다','ATP를 써서 비가역이다','평형이 없다'], ex:'호모시스테인(재메틸화·황전이)과 아데노신이 소비돼야 앞으로 갑니다. 그래서 호모시스테인이 쌓이면 SAH도 쌓여 메틸화가 억제됩니다.'},
+    {q:'CBS를 알로스테릭 활성화하는 대사물은?', opts:['SAM','SAH','시스테인','GSH'], ex:'SAM이 많으면 CBS는 켜지고 MTHFR은 꺼집니다. 메티오닌이 충분할 때 호모시스테인을 재메틸화 대신 황전이로 보내는 스위치입니다.'},
+    {q:'황전이로 만든 시스테인의 원자 출처는?', opts:['황은 메티오닌, 탄소 골격과 아미노기는 세린','황과 탄소 모두 메티오닌','황은 세린, 탄소는 메티오닌','황은 황산염, 탄소는 글리신'], ex:'CBS가 호모시스테인과 세린을 붙이고, CTH가 잘라 세린 쪽 골격에 황이 남은 시스테인을 냅니다. 나머지는 α-케토부티르산이 됩니다.'},
+    {q:'시스테인에서 타우린까지 주 경로의 효소 순서는?', opts:['CDO1 → CSAD → FMO1','CSAD → CDO1 → FMO1','GCL → GSS → CDO1','CBS → CTH → CSAD'], ex:'CDO1이 시스테인을 시스테인 설핀산으로 산화하고, CSAD가 탈카복실화해 하이포타우린을 만든 뒤, 하이포타우린이 타우린으로 산화됩니다.'},
+    {q:'GSH 합성의 율속 효소와 그 억제자는?', opts:['GCL, GSH가 되먹임 억제','GSS, 시스테인이 억제','GSR, NADPH가 억제','GPX4, 셀레늄이 억제'], ex:'GCL이 글루탐산과 시스테인을 붙여 γ-글루타밀시스테인을 만들고, GSS가 글리신을 붙입니다. 보통 시스테인 공급이 제한 요인입니다.'},
+    {q:'NRF2가 활성화된 폐암에서 CDO1이 침묵되는 것이 세포에 유리한 이유로 제시된 것은?', opts:['시스테인을 타우린·아황산 쪽으로 잃지 않고 GSH 합성에 남긴다','타우린을 더 많이 만든다','메티오닌을 재생한다','SAM을 늘린다'], ex:'CDO1을 되살리면 시스테인이 타우린·황산 쪽으로 빠져나가 GSH 합성에 쓸 시스테인이 줄고, NRF2 활성 폐암 세포의 증식이 줄었습니다(Kang 2019, eLife).'}
+  ]
+},
+{
+  id:'pyr', grp:'nuc', code:'PYR', title:'피리미딘 de novo 합성', short:'피리미딘 합성', color:'--m-pyr',
+  intro:'고리를 먼저 만들고 리보스-인산은 나중에 붙입니다. 세포질의 CAD와 UMPS가 앞뒤를 맡고, 가운데 DHODH 한 단계만 미토콘드리아 내막에서 일어납니다.',
+  keys:['고리 먼저, 리보스 나중: CAD 3단계 → DHODH → UMPS 2단계 → UMP',
+        'DHODH는 미토콘드리아 내막에서 CoQ로 전자를 넘김 → 전자전달계에 의존',
+        '조절: CPS2를 PRPP가 켜고 UTP가 끔. mTORC1–S6K1이 CAD를 인산화해 켬'],
+  steps:[
+    {e:'CAD', dom:'CPS2 도메인', ef:'carbamoyl-phosphate synthetase 2 · aspartate transcarbamoylase · dihydroorotase (3기능 효소)', ec:'6.3.5.5', s:'글루타민 + HCO₃⁻ + 2 ATP', p:'카바모일인산 (carbamoyl phosphate) + 글루탐산', co:['ATP 2개'], loc:'세포질', atoms:'C2 ← HCO₃⁻ · N3 ← 글루타민', n:'율속 단계. PRPP가 활성화하고 UTP가 억제합니다. mTORC1–S6K1이 Ser1859를 인산화해 켭니다(Ben-Sahra 2013; Robitaille 2013, Science).'},
+    {e:'CAD', dom:'ATCase 도메인', ef:'aspartate transcarbamoylase', ec:'2.1.3.2', s:'카바모일인산 + 아스파르트산', p:'N-카바모일아스파르트산 + Pi', co:[], loc:'세포질', atoms:'N1 · C4 · C5 · C6 ← 아스파르트산', n:'아스파르트산의 네 원자가 고리에 들어옵니다. PALA가 억제합니다.'},
+    {e:'CAD', dom:'DHOase 도메인', ef:'dihydroorotase', ec:'3.5.2.3', s:'N-카바모일아스파르트산', p:'디하이드로오로트산 + H₂O', co:[], loc:'세포질', n:'탈수 축합으로 고리가 닫힙니다.'},
+    {e:'DHODH', ef:'dihydroorotate dehydrogenase (quinone)', ec:'1.3.5.2', s:'디하이드로오로트산 + CoQ', p:'오로트산 + CoQH₂', co:['FMN','CoQ (유비퀴논)'], loc:'미토콘드리아 내막 (바깥면)', n:'전자를 CoQ로 넘겨 전자전달계와 이어집니다. 억제제 brequinar, leflunomide(teriflunomide). 전자전달계가 막힌 세포가 우리딘을 필요로 하는 이유입니다.'},
+    {e:'UMPS', dom:'OPRT 도메인', ef:'UMP synthase: orotate phosphoribosyltransferase', ec:'2.4.2.10', s:'오로트산 + PRPP', p:'OMP (orotidine monophosphate) + PPi', co:[], loc:'세포질', n:'고리가 완성된 뒤에야 리보스-인산이 붙습니다. 퓨린과 반대 순서입니다.'},
+    {e:'UMPS', dom:'ODC 도메인', ef:'UMP synthase: OMP decarboxylase', ec:'4.1.1.23', s:'OMP', p:'UMP (uridine monophosphate) + CO₂', co:['보조인자 없음'], loc:'세포질', n:'촉매 속도 증가 폭이 알려진 효소 중 가장 큰 편(약 10¹⁷배)입니다. 떠나는 CO₂는 아스파르트산의 α-카복실기입니다.'},
+    {e:'CMPK1 · NME', ef:'UMP-CMP kinase 1 · nucleoside diphosphate kinase', ec:'2.7.4.14 · 2.7.4.6', s:'UMP + 2 ATP', p:'UTP', co:['ATP 2개'], loc:'세포질', n:'UMP → UDP → UTP. UDP는 RNR로 가서 dUDP가 되기도 합니다.'},
+    {e:'CTPS', ef:'CTP synthase 1/2', ec:'6.3.4.2', s:'UTP + 글루타민 + ATP', p:'CTP + 글루탐산', co:['ATP','GTP (알로스테릭 활성화)'], loc:'세포질', n:'CTP가 되먹임 억제합니다. 세포 안에서 필라멘트(cytoophidium)를 만듭니다.'}
+  ],
+  side:[
+    {e:'RNR', ef:'ribonucleotide reductase (RRM1 · RRM2)', ec:'1.17.4.1', s:'NDP (ADP·GDP·CDP·UDP)', p:'dNDP', co:['thioredoxin','티로실 라디칼 (RRM2)'], loc:'세포질', n:'모든 dNTP의 관문. 하이드록시유레아가 RRM2를 억제하고, dATP가 전체 활성을 끕니다.'},
+    {e:'TYMS', ef:'thymidylate synthase', ec:'2.1.1.45', s:'dUMP + 5,10-메틸렌-THF', p:'dTMP + DHF', co:[], loc:'세포질 · 핵', n:'5-FU의 대사물 FdUMP가 메틸렌-THF와 함께 붙잡혀 억제합니다.'},
+    {e:'DHFR', ef:'dihydrofolate reductase', ec:'1.5.1.3', s:'DHF + NADPH', p:'THF + NADP⁺', co:['NADPH'], loc:'세포질', n:'메토트렉세이트의 표적.'},
+    {e:'CPS1', ef:'carbamoyl-phosphate synthetase 1 (요소 회로)', ec:'6.3.4.16', s:'NH₄⁺ + HCO₃⁻ + 2 ATP', p:'카바모일인산', co:['N-아세틸글루탐산 (활성화)'], loc:'미토콘드리아', n:'원래 요소 회로 효소지만, KRAS/LKB1 변이 폐암에서는 피리미딘 합성에 카바모일인산을 공급합니다(Kim 2017, Nature).'},
+    {e:'UCK2', ef:'uridine-cytidine kinase 2', ec:'2.7.1.48', s:'우리딘 + ATP', p:'UMP', co:['ATP'], loc:'세포질', n:'salvage 경로. 배지에 우리딘을 넣으면 DHODH 억제를 우회합니다.'}
+  ],
+  notes:[],
+  order:[{t:'글루타민 + HCO₃⁻',f:'+ 2 ATP'},{t:'카바모일인산',f:'carbamoyl phosphate'},{t:'N-카바모일아스파르트산',f:'carbamoyl aspartate'},{t:'디하이드로오로트산',f:'dihydroorotate'},{t:'오로트산',f:'orotate'},{t:'OMP',f:'orotidine monophosphate'},{t:'UMP',f:'uridine monophosphate'},{t:'UTP',f:'uridine triphosphate'},{t:'CTP',f:'cytidine triphosphate'}],
+  via:['CAD (CPS2)','CAD (ATCase) + 아스파르트산','CAD (DHOase)','DHODH','UMPS (OPRT) + PRPP','UMPS (ODC)','CMPK1 · NME','CTPS'],
+  ring:'pyr',
+  quiz:[
+    {q:'CAD의 세 활성을 반응 순서대로 나열하면?', opts:['CPS2 → ATCase → DHOase','ATCase → CPS2 → DHOase','DHOase → CPS2 → ATCase','CPS2 → DHOase → ATCase'], ex:'카바모일인산 합성 → 아스파르트산 결합 → 고리 닫힘. 세 활성이 한 폴리펩타이드에 들어 있습니다.'},
+    {q:'CPS2(피리미딘)와 CPS1(요소 회로)의 차이로 옳은 것은?', opts:['CPS2는 세포질에서 글루타민 질소를, CPS1은 미토콘드리아에서 암모니아를 쓴다','둘 다 미토콘드리아에 있다','CPS2는 N-아세틸글루탐산으로 활성화된다','CPS1은 UTP로 억제된다'], ex:'CPS2는 PRPP로 활성화되고 UTP로 억제되며, CPS1은 N-아세틸글루탐산으로 활성화됩니다. LKB1 결손 폐암에서는 CPS1이 만든 카바모일인산이 피리미딘 합성에 쓰입니다(Kim 2017, Nature).'},
+    {q:'DHODH가 전자를 넘기는 곳은?', opts:['미토콘드리아 내막의 CoQ','NAD⁺','세포질의 FAD','산소에 직접'], ex:'그래서 전자전달계가 막히면 피리미딘 합성도 멈추고, 이런 세포는 배지에 우리딘을 넣어야 자랍니다.'},
+    {q:'피리미딘 고리에서 아스파르트산이 주는 원자는?', opts:['N1, C4, C5, C6','C2, N3','N1, N3','C4, C5만'], ex:'C2는 중탄산(HCO₃⁻), N3은 글루타민의 아미드 질소입니다. 둘 다 카바모일인산을 거쳐 들어옵니다.'},
+    {q:'피리미딘 합성에서 리보스-인산(PRPP)이 붙는 시점은?', opts:['고리가 완성된 뒤, 오로트산 단계','첫 단계','카바모일아스파르트산 단계','UTP 단계'], ex:'퓨린은 PRPP 위에서 고리를 쌓고, 피리미딘은 고리를 먼저 만든 뒤 UMPS(OPRT)가 PRPP를 붙입니다.'},
+    {q:'mTORC1이 피리미딘 합성을 빠르게 켜는 방식은?', opts:['S6K1이 CAD의 Ser1859를 인산화','DHODH 전사를 억제','UMPS를 분해','CTPS를 필라멘트로 만든다'], ex:'2013년 Science 두 편(Ben-Sahra; Robitaille)이 성장 신호가 전사 없이도 피리미딘 합성을 올린다는 것을 보였습니다.'},
+    {q:'5-FU의 주된 작용 기전은?', opts:['대사물 FdUMP가 메틸렌-THF와 함께 TYMS를 붙잡아 억제한다','DHFR을 억제한다','RNR을 억제한다','DHODH를 억제한다'], ex:'dTMP가 고갈돼 DNA 합성이 멈춥니다. 5-FU는 RNA에도 끼어들어 독성을 더합니다.'},
+    {q:'CTP 합성에서 질소를 주는 것은?', opts:['글루타민','암모니아만','아스파르트산','글리신'], ex:'CTPS가 UTP의 C4에 글루타민 아미드 질소를 붙입니다(ATP 소모). CTP가 되먹임 억제합니다.'}
+  ]
+},
+{
+  id:'pur', grp:'nuc', code:'PUR', title:'퓨린 de novo 합성', short:'퓨린 합성', color:'--m-pur',
+  intro:'PRPP의 리보스 위에 원자를 하나씩 쌓아 10단계 만에 IMP를 만듭니다. 5원 이미다졸 고리가 먼저, 6원 고리가 나중에 닫힙니다. IMP에서 AMP와 GMP로 갈라집니다.',
+  keys:['리보스 먼저, 고리 나중: PRPP 위에 10단계로 IMP',
+        '원자 출처: 글리신(C4·C5·N7), 글루타민(N3·N9), 아스파르트산(N1), CO₂(C6), 10-포르밀-THF(C2·C8)',
+        'IMP → AMP는 GTP, IMP → GMP는 ATP를 씀'],
+  steps:[
+    {no:0, e:'PRPS1', ef:'phosphoribosyl pyrophosphate synthetase 1', ec:'2.7.6.1', s:'리보스-5-인산 + ATP', p:'PRPP (phosphoribosyl pyrophosphate) + AMP', co:['ATP (피로인산 전달)'], loc:'세포질', n:'리보스는 오탄당인산 경로에서 옵니다. 퓨린·피리미딘·salvage가 모두 PRPP를 씁니다.'},
+    {e:'PPAT', ef:'phosphoribosyl pyrophosphate amidotransferase', ec:'2.4.2.14', s:'PRPP + 글루타민', p:'PRA (5-phosphoribosylamine) + 글루탐산 + PPi', co:[], loc:'세포질', atoms:'N9 ← 글루타민', n:'퓨린 전용 첫 단계(결정 단계). AMP·GMP가 억제하고 PRPP가 활성화합니다.'},
+    {e:'GART', dom:'GARS 도메인', ef:'trifunctional purine biosynthetic protein: GAR synthetase', ec:'6.3.4.13', s:'PRA + 글리신 + ATP', p:'GAR (glycinamide ribonucleotide)', co:['ATP'], loc:'세포질', atoms:'C4 · C5 · N7 ← 글리신', n:'글리신 한 분자가 통째로 들어옵니다.'},
+    {e:'GART', dom:'GAR transformylase 도메인', ef:'GAR transformylase', ec:'2.1.2.2', s:'GAR + 10-포르밀-THF', p:'FGAR (formylglycinamide ribonucleotide) + THF', co:['10-포르밀-THF'], loc:'세포질', atoms:'C8 ← 10-포르밀-THF', n:'pemetrexed의 표적 중 하나입니다.'},
+    {e:'PFAS', ef:'phosphoribosylformylglycinamidine synthase (FGAM synthetase)', ec:'6.3.5.3', s:'FGAR + 글루타민 + ATP', p:'FGAM (formylglycinamidine ribonucleotide) + 글루탐산', co:['ATP'], loc:'세포질', atoms:'N3 ← 글루타민', n:'두 번째 글루타민 질소가 들어옵니다.'},
+    {e:'GART', dom:'AIRS 도메인', ef:'AIR synthetase', ec:'6.3.3.1', s:'FGAM + ATP', p:'AIR (5-aminoimidazole ribonucleotide)', co:['ATP'], loc:'세포질', n:'5원 이미다졸 고리가 먼저 닫힙니다.'},
+    {e:'PAICS', dom:'AIR carboxylase 도메인', ef:'phosphoribosylaminoimidazole carboxylase / succinocarboxamide synthetase', ec:'4.1.1.21', s:'AIR + CO₂', p:'CAIR (carboxyaminoimidazole ribonucleotide)', co:['ATP 불필요 (사람)'], loc:'세포질', atoms:'C6 ← CO₂', n:'세균은 ATP를 쓰는 두 효소(PurK·PurE)를 거치지만 사람 효소는 CO₂를 직접 붙입니다.'},
+    {e:'PAICS', dom:'SAICAR synthetase 도메인', ef:'SAICAR synthetase', ec:'6.3.2.6', s:'CAIR + 아스파르트산 + ATP', p:'SAICAR (succinylaminoimidazole carboxamide ribonucleotide)', co:['ATP'], loc:'세포질', atoms:'N1 ← 아스파르트산', n:'전자전달계가 막혀 아스파르트산이 부족하면 여기서 막힙니다.'},
+    {e:'ADSL', ef:'adenylosuccinate lyase', ec:'4.3.2.2', s:'SAICAR', p:'AICAR (aminoimidazole carboxamide ribonucleotide) + 푸마르산', co:[], loc:'세포질', n:'아스파르트산의 탄소 골격은 푸마르산으로 떠나고 질소만 남습니다. AICAR는 AMPK 활성제(AICA-riboside)의 모체입니다.'},
+    {e:'ATIC', dom:'AICAR transformylase 도메인', ef:'AICAR transformylase / IMP cyclohydrolase', ec:'2.1.2.3', s:'AICAR + 10-포르밀-THF', p:'FAICAR (formamidoimidazole carboxamide ribonucleotide) + THF', co:['10-포르밀-THF'], loc:'세포질', atoms:'C2 ← 10-포르밀-THF', n:'메토트렉세이트 폴리글루탐산이 이 단계도 억제해 AICAR가 쌓입니다.'},
+    {e:'ATIC', dom:'IMP cyclohydrolase 도메인', ef:'IMP cyclohydrolase', ec:'3.5.4.10', s:'FAICAR', p:'IMP (inosine monophosphate) + H₂O', co:[], loc:'세포질', n:'6원 고리가 닫혀 첫 퓨린 뉴클레오타이드 IMP가 완성됩니다.'}
+  ],
+  side:[
+    {e:'ADSS', ef:'adenylosuccinate synthetase', ec:'6.3.4.4', s:'IMP + 아스파르트산 + GTP', p:'아데닐로숙신산', co:['GTP'], loc:'세포질', n:'AMP를 만드는 데 GTP가 듭니다. AMP의 6번 아미노기는 아스파르트산 질소입니다.'},
+    {e:'ADSL', ef:'adenylosuccinate lyase', ec:'4.3.2.2', s:'아데닐로숙신산', p:'AMP + 푸마르산', co:[], loc:'세포질', n:'8단계와 같은 효소가 두 번 쓰입니다.'},
+    {e:'IMPDH', ef:'IMP dehydrogenase 1/2', ec:'1.1.1.205', s:'IMP + NAD⁺ + H₂O', p:'XMP (xanthosine monophosphate) + NADH', co:['NAD⁺ → NADH'], loc:'세포질', n:'GMP 쪽 율속 단계. mycophenolic acid의 표적입니다.'},
+    {e:'GMPS', ef:'GMP synthetase', ec:'6.3.5.2', s:'XMP + 글루타민 + ATP', p:'GMP + 글루탐산', co:['ATP'], loc:'세포질', n:'GMP를 만드는 데 ATP가 듭니다. 그래서 AMP와 GMP 생산이 서로를 맞춥니다.'},
+    {e:'HPRT1', ef:'hypoxanthine-guanine phosphoribosyltransferase 1', ec:'2.4.2.8', s:'하이포잔틴 / 구아닌 + PRPP', p:'IMP / GMP + PPi', co:[], loc:'세포질', n:'salvage 경로. thiopurine(6-MP 등)을 활성화합니다. 전자전달계가 막히면 이 경로 의존이 커집니다(Wu 2024, Cell Metabolism).'},
+    {e:'APRT', ef:'adenine phosphoribosyltransferase', ec:'2.4.2.7', s:'아데닌 + PRPP', p:'AMP + PPi', co:[], loc:'세포질', n:'아데닌 salvage.'}
+  ],
+  notes:['퓨리노솜(purinosome): 퓨린이 부족하면 PPAT · GART · PFAS · PAICS · ADSL · ATIC가 미토콘드리아 근처에 모입니다. NUDT5가 PPAT에 붙어 퓨리노솜 해체를 촉진합니다(Wu 2025, Science).'],
+  order:[{t:'PRPP',f:'phosphoribosyl pyrophosphate'},{t:'PRA',f:'5-phosphoribosylamine'},{t:'GAR',f:'glycinamide ribonucleotide'},{t:'FGAR',f:'formylglycinamide ribonucleotide'},{t:'FGAM',f:'formylglycinamidine ribonucleotide'},{t:'AIR',f:'aminoimidazole ribonucleotide'},{t:'CAIR',f:'carboxyaminoimidazole ribonucleotide'},{t:'SAICAR',f:'succinylaminoimidazole carboxamide ribonucleotide'},{t:'AICAR',f:'aminoimidazole carboxamide ribonucleotide'},{t:'FAICAR',f:'formamidoimidazole carboxamide ribonucleotide'},{t:'IMP',f:'inosine monophosphate'}],
+  via:['PPAT + 글루타민','GART (GARS) + 글리신','GART (transformylase) + 10-포르밀-THF','PFAS + 글루타민','GART (AIRS)','PAICS (carboxylase) + CO₂','PAICS (SAICARS) + 아스파르트산','ADSL − 푸마르산','ATIC (transformylase) + 10-포르밀-THF','ATIC (cyclohydrolase)'],
+  ring:'pur',
+  quiz:[
+    {q:'퓨린 de novo 합성의 결정 단계(committed step) 효소는?', opts:['PPAT','PRPS1','GART','ATIC'], ex:'PRPP + 글루타민 → 5-포스포리보실아민. PRPP는 다른 경로에도 쓰이므로 PRPS1이 아니라 PPAT가 퓨린 전용 첫 단계입니다.'},
+    {q:'PPAT의 조절로 옳은 것은?', opts:['AMP·GMP가 억제하고 PRPP가 활성화','ATP가 억제하고 GTP가 활성화','IMP가 활성화','UTP가 억제'], ex:'AMP와 GMP가 함께 있으면 억제가 상승적으로 강해집니다. PRPP 농도가 오르면 활성이 올라갑니다.'},
+    {q:'PRPP 이후 IMP까지 ATP를 쓰는 단계는? (사람 기준)', opts:['2, 4, 5, 7단계','1, 3, 9단계','6, 8, 10단계','모든 단계'], ex:'GARS(2), PFAS(4), AIRS(5), SAICARS(7). 사람 PAICS의 카복실화(6)는 ATP 없이 CO₂를 씁니다.'},
+    {q:'푸마르산이 떨어져 나오는 반응의 효소는?', opts:['ADSL','ADSS','PAICS','GMPS'], ex:'ADSL은 SAICAR → AICAR(8단계)와 아데닐로숙신산 → AMP 두 반응에서 모두 푸마르산을 냅니다. 아스파르트산이 질소만 남기고 골격은 TCA 쪽으로 돌려주는 셈입니다.'},
+    {q:'IMP에서 AMP와 GMP로 갈 때 쓰는 에너지원은?', opts:['AMP 쪽은 GTP, GMP 쪽은 ATP','둘 다 ATP','둘 다 GTP','AMP 쪽은 ATP, GMP 쪽은 GTP'], ex:'서로의 생성물을 연료로 써서 아데닌·구아닌 뉴클레오타이드의 균형을 맞춥니다.'},
+    {q:'mycophenolic acid의 표적은?', opts:['IMPDH','GMPS','ADSS','HPRT1'], ex:'IMP → XMP(NAD⁺ 소모)를 막아 GTP를 고갈시킵니다. 림프구가 salvage보다 de novo에 크게 의존해 면역억제제로 쓰입니다.'},
+    {q:'전자전달계가 막혔을 때 퓨린 대사의 변화로 보고된 것은?', opts:['de novo 합성이 줄고 HPRT1 salvage 의존이 커진다','de novo 합성이 늘어난다','salvage가 멈춘다','퓨린 분해가 멈춘다'], ex:'아스파르트산과 NAD⁺가 부족해 de novo가 줄고, 오탄당인산 경로가 준 PRPP로 salvage가 늘어납니다(Wu 2024, Cell Metabolism). HPRT1을 막으면 전자전달계 억제에 더 민감해집니다.'},
+    {q:'퓨리노솜(purinosome)에 대한 설명으로 옳은 것은?', opts:['퓨린이 부족할 때 de novo 효소들이 미토콘드리아 근처에 모이는 구조','리소좀 안의 퓨린 분해 복합체','핵 안의 DNA 중합효소 복합체','salvage 효소만 모인 복합체'], ex:'PPAT, GART, PFAS, PAICS, ADSL, ATIC가 모입니다. NUDT5가 PPAT에 붙어 퓨리노솜 해체를 촉진한다는 연구가 있습니다(Wu 2025, Science).'},
+    {q:'퓨린 고리에서 글리신 한 분자가 통째로 주는 원자는?', opts:['C4, C5, N7','C2, C8','N1, N3','C6, N9'], ex:'GARS(2단계)가 글리신을 붙입니다. 아스파르트산(N1)과 달리 탄소까지 고리에 남습니다.'}
+  ]
+},
+{
+  id:'ppp', grp:'carb', code:'PPP', title:'오탄당인산 경로 (PPP)', short:'오탄당인산 경로', color:'--m-ppp',
+  intro:'PPP(pentose phosphate pathway)는 포도당-6-인산에서 갈라져 NADPH와 리보스-5-인산을 만듭니다. 산화 가지는 비가역이고 NADPH를, 비산화 가지는 가역이고 탄소 재배치를 맡습니다.',
+  keys:['산화 가지: G6PD → PGLS → PGD. 포도당 1분자당 NADPH 2개 + CO₂ 1개',
+        '비산화 가지: RPIA·RPE·TKT(TPP 필요)·TALDO1이 5탄당과 해당과정 중간산물을 가역적으로 바꿈',
+        '리보스-5-인산 → PRPS1 → PRPP: 퓨린·피리미딘 합성의 출발점'],
+  steps:[
+    {e:'G6PD', ef:'glucose-6-phosphate dehydrogenase', ec:'1.1.1.49', s:'포도당-6-인산 + NADP⁺', p:'6-포스포글루코노-δ-락톤 + NADPH', co:['NADP⁺ → NADPH'], loc:'세포질', n:'율속 단계. NADPH가 경쟁적으로 억제해서 NADPH 소비 속도가 흐름을 정합니다. p53이 G6PD에 직접 붙어 억제한다는 보고가 있습니다(Jiang 2011, Nature Cell Biology).'},
+    {e:'PGLS', ef:'6-phosphogluconolactonase', ec:'3.1.1.31', s:'6-포스포글루코노-δ-락톤 + H₂O', p:'6-포스포글루콘산', co:[], loc:'세포질', n:'락톤 고리를 엽니다. 저절로도 일어나지만 효소가 속도를 높입니다.'},
+    {e:'PGD', ef:'6-phosphogluconate dehydrogenase', ec:'1.1.1.44', s:'6-포스포글루콘산 + NADP⁺', p:'리불로스-5-인산 + CO₂ + NADPH', co:['NADP⁺ → NADPH'], loc:'세포질', n:'두 번째 NADPH. 포도당의 C1이 CO₂로 떠납니다([1-¹³C]포도당 추적으로 PPP 흐름을 재는 원리).'},
+    {e:'RPIA', ef:'ribose-5-phosphate isomerase A', ec:'5.3.1.6', s:'리불로스-5-인산', p:'리보스-5-인산', co:[], loc:'세포질', n:'케토스를 알도스로 바꿉니다. 리보스-5-인산은 PRPS1이 PRPP로 만듭니다.'},
+    {e:'PRPS1', ef:'phosphoribosyl pyrophosphate synthetase 1', ec:'2.7.6.1', s:'리보스-5-인산 + ATP', p:'PRPP + AMP', co:['ATP'], loc:'세포질', n:'뉴클레오타이드 합성 쪽으로 넘어가는 다리입니다(퓨린 탭 0단계와 같은 반응).'}
+  ],
+  side:[
+    {e:'RPE', ef:'ribulose-5-phosphate 3-epimerase', ec:'5.1.3.1', s:'리불로스-5-인산', p:'자일룰로스-5-인산', co:[], loc:'세포질', n:'트랜스케톨레이스의 2탄소 공여체를 만듭니다.'},
+    {e:'TKT', ef:'transketolase', ec:'2.2.1.1', s:'자일룰로스-5-인산 + 리보스-5-인산', p:'글리세르알데하이드-3-인산 + 세도헵툴로스-7-인산', co:['TPP (thiamine pyrophosphate)'], loc:'세포질', n:'2탄소 단위를 옮깁니다. 같은 효소가 자일룰로스-5-인산 + 에리트로스-4-인산 → 글리세르알데하이드-3-인산 + 과당-6-인산 반응도 합니다.'},
+    {e:'TALDO1', ef:'transaldolase 1', ec:'2.2.1.2', s:'세도헵툴로스-7-인산 + 글리세르알데하이드-3-인산', p:'에리트로스-4-인산 + 과당-6-인산', co:[], loc:'세포질', n:'3탄소 단위를 옮깁니다. TKT와 함께 5탄당 3개를 6탄당 2개 + 3탄당 1개로 바꿉니다.'}
+  ],
+  notes:['비산화 가지는 가역이라 해당과정의 과당-6-인산과 글리세르알데하이드-3-인산에서 거꾸로 리보스-5-인산을 만들 수 있습니다. KRAS 췌장암은 이 방향으로 리보스를 얻습니다(Ying 2012, Cell). 반대로 NADPH만 필요하면 5탄당을 다시 해당과정으로 돌려보내 산화 가지를 반복합니다.'],
+  order:[{t:'포도당-6-인산',f:'glucose-6-phosphate'},{t:'6-포스포글루코노락톤',f:'6-phosphoglucono-δ-lactone'},{t:'6-포스포글루콘산',f:'6-phosphogluconate'},{t:'리불로스-5-인산',f:'ribulose-5-phosphate'},{t:'리보스-5-인산',f:'ribose-5-phosphate'},{t:'PRPP',f:'phosphoribosyl pyrophosphate'}],
+  via:['G6PD (+ NADPH)','PGLS','PGD (+ NADPH, − CO₂)','RPIA','PRPS1'],
+  quiz:[
+    {q:'PPP의 율속 효소와 그 주 억제자는?', opts:['G6PD, NADPH','PGD, NADP⁺','TKT, ATP','RPIA, 리보스-5-인산'], ex:'G6PD는 NADPH에 경쟁적으로 억제됩니다. 그래서 NADPH를 쓰는 반응(지방산 합성, GSH 환원)이 빨라지면 PPP 흐름도 따라 빨라집니다.'},
+    {q:'포도당-6-인산 1분자가 산화 가지를 지날 때 생기는 것은?', opts:['NADPH 2개 + CO₂ 1개','NADPH 1개 + CO₂ 2개','NADH 2개','ATP 2개'], ex:'G6PD와 PGD가 NADPH를 하나씩 만들고, PGD 단계에서 C1이 CO₂로 떠납니다.'},
+    {q:'트랜스케톨레이스(TKT)의 보조인자는?', opts:['TPP (thiamine pyrophosphate)','PLP','비오틴','FAD'], ex:'TKT는 TPP를 써서 2탄소 단위를 옮깁니다. 적혈구 TKT 활성은 티아민 결핍 검사에 쓰였습니다.'},
+    {q:'세포가 리보스는 많이 필요하지만 NADPH는 덜 필요할 때 쓰는 방법은?', opts:['비산화 가지를 역방향으로 돌려 과당-6-인산·글리세르알데하이드-3-인산에서 리보스-5-인산을 만든다','G6PD를 더 많이 돌린다','PGD로 리보스를 직접 만든다','글리코겐을 분해해 리보스를 얻는다'], ex:'비산화 가지는 가역이므로 해당과정 중간산물에서 리보스를 만들 수 있습니다. KRAS 췌장암이 이 방향을 씁니다(Ying 2012, Cell).'},
+    {q:'G6PD 결핍 적혈구가 산화 스트레스에 특히 약한 이유는?', opts:['미토콘드리아가 없어 NADPH를 거의 PPP로만 얻으므로 GSH를 환원하지 못한다','헤모글로빈 합성이 멈춘다','해당과정이 멈춰 ATP가 없다','철을 흡수하지 못한다'], ex:'적혈구는 ME1·IDH 경로가 거의 없어 G6PD가 막히면 GSH 재생이 불가능해지고, 산화 약물이나 잠두(fava bean)에서 용혈이 일어납니다.'},
+    {q:'[1,2-¹³C]포도당 추적에서 산화 PPP를 거친 젖산의 특징은?', opts:['C1이 CO₂로 빠져 M+1 젖산이 생긴다','M+2 젖산만 생긴다','M+3 젖산이 생긴다','표지가 사라진다'], ex:'해당과정만 거치면 M+2, 산화 PPP를 거쳐 C1을 잃고 돌아오면 M+1이 생깁니다. M+1/M+2 비율로 PPP 흐름을 추정합니다.'},
+    {q:'p53이 PPP를 억제하는 방식으로 보고된 것은?', opts:['G6PD에 직접 결합해 활성 이량체 형성을 막는다','PGD 전사를 끈다','TKT를 분해한다','PRPS1을 인산화한다'], ex:'p53이 사라지면 G6PD 활성이 올라가 NADPH와 생합성이 늘어난다는 보고입니다(Jiang 2011, Nature Cell Biology).'}
+  ]
+},
+{
+  id:'fa', grp:'lip', code:'FA', title:'지방산 합성', short:'지방산 합성', color:'--m-fa',
+  intro:'미토콘드리아의 citrate를 세포질로 꺼내 acetyl-CoA를 만들고, malonyl-CoA를 2탄소씩 붙여 팔미트산(C16:0)을 만든 뒤 소포체에서 늘이고 이중결합을 넣습니다.',
+  keys:['citrate → (SLC25A1) → ACLY → acetyl-CoA → ACC1(율속, 비오틴) → malonyl-CoA → FASN → 팔미트산',
+        '팔미트산 1분자 = acetyl-CoA 1 + malonyl-CoA 7 + NADPH 14',
+        'SCD1(MUFA)과 ACSL4(PUFA 활성화)가 막 지질 구성을 바꿔 페롭토시스 민감성을 정함'],
+  steps:[
+    {e:'SLC25A1', ef:'mitochondrial citrate carrier (CIC)', ec:'수송체', s:'미토콘드리아 citrate', p:'세포질 citrate', co:['말산과 교환'], loc:'미토콘드리아 내막', n:'TCA 회로의 citrate를 지질 합성 재료로 꺼냅니다.'},
+    {e:'ACLY', ef:'ATP-citrate lyase', ec:'2.3.3.8', s:'citrate + CoA + ATP', p:'acetyl-CoA + 옥살아세트산 + ADP + Pi', co:['ATP'], loc:'세포질 · 핵', n:'세포질·핵 acetyl-CoA의 주 공급원(지방산·콜레스테롤·히스톤 아세틸화). AKT가 인산화해 활성화합니다.'},
+    {e:'ACC1', ef:'acetyl-CoA carboxylase 1 (ACACA)', ec:'6.4.1.2', s:'acetyl-CoA + HCO₃⁻ + ATP', p:'malonyl-CoA + ADP + Pi', co:['비오틴','ATP'], loc:'세포질', n:'율속 단계. citrate가 활성화하고 장쇄 acyl-CoA가 억제하며, AMPK가 Ser79를 인산화해 끕니다. malonyl-CoA는 CPT1을 억제해 β-산화를 막습니다.'},
+    {e:'FASN', ef:'fatty acid synthase', ec:'2.3.1.85', s:'acetyl-CoA + 7 malonyl-CoA + 14 NADPH', p:'팔미트산 (C16:0) + 7 CO₂', co:['NADPH 14개'], loc:'세포질', n:'축합 → 환원 → 탈수 → 환원을 7번 반복합니다. 한 바퀴에 2탄소와 NADPH 2개.'},
+    {e:'ELOVL6', ef:'elongation of very long chain fatty acids 6', ec:'2.3.1.199', s:'팔미토일-CoA + malonyl-CoA + NADPH', p:'스테아로일-CoA (C18:0)', co:['NADPH'], loc:'소포체', n:'팔미트산은 먼저 ACSL(long-chain acyl-CoA synthetase)이 CoA를 붙여야 늘어날 수 있습니다.'},
+    {e:'SCD1', ef:'stearoyl-CoA desaturase 1', ec:'1.14.19.1', s:'스테아로일-CoA + O₂', p:'올레오일-CoA (C18:1 n-9)', co:['NADH · cytochrome b5','O₂'], loc:'소포체', n:'Δ9 이중결합을 넣어 MUFA(monounsaturated fatty acid)를 만듭니다. 막의 MUFA가 많으면 페롭토시스에 강해집니다(Magtanong 2019, Cell Chemical Biology).'}
+  ],
+  side:[
+    {e:'ACSS2', ef:'acyl-CoA synthetase short-chain family member 2', ec:'6.2.1.1', s:'아세트산 + CoA + ATP', p:'acetyl-CoA + AMP + PPi', co:['ATP'], loc:'세포질 · 핵', n:'저산소·영양 결핍에서 아세트산을 탄소원으로 씁니다(Schug 2015; Comerford 2014, Cell).'},
+    {e:'ME1', ef:'malic enzyme 1', ec:'1.1.1.40', s:'말산 + NADP⁺', p:'피루브산 + CO₂ + NADPH', co:['NADP⁺ → NADPH'], loc:'세포질', n:'ACLY가 낸 옥살아세트산 → 말산 → 피루브산으로 가며 지방산 합성용 NADPH를 보탭니다.'},
+    {e:'FADS2', ef:'fatty acid desaturase 2 (Δ6)', ec:'1.14.19.3', s:'리놀레산 (C18:2) / 팔미트산', p:'γ-리놀렌산 (C18:3) / sapienate (C16:1 n-10)', co:['O₂'], loc:'소포체', n:'PUFA 합성의 첫 불포화 효소. SCD1을 막으면 일부 암은 FADS2로 sapienate를 만들어 우회합니다(Vriens 2019, Nature).'},
+    {e:'ACSL4', ef:'long-chain acyl-CoA synthetase 4', ec:'6.2.1.3', s:'아라키돈산 등 PUFA + CoA + ATP', p:'PUFA-CoA', co:['ATP'], loc:'소포체 · 미토콘드리아 연접부', n:'PUFA를 인지질에 넣는 첫 단계라 페롭토시스 민감성을 결정합니다(Doll 2017, Nature Chemical Biology).'},
+    {e:'CPT1A', ef:'carnitine palmitoyltransferase 1A', ec:'2.3.1.21', s:'팔미토일-CoA + 카르니틴', p:'팔미토일카르니틴 + CoA', co:[], loc:'미토콘드리아 외막', n:'β-산화의 입구. malonyl-CoA가 억제해 합성과 분해가 동시에 돌지 않게 합니다.'}
+  ],
+  notes:['전사 조절은 SREBP1이 맡고, mTORC1이 SREBP1을 활성화합니다. 팔미트산 1분자에 NADPH 14개가 들어가므로 산화 PPP, ME1, IDH1, 1탄소 대사가 나눠 공급합니다.'],
+  order:[{t:'미토콘드리아 citrate',f:'TCA 회로에서'},{t:'세포질 citrate',f:'cytosolic citrate'},{t:'acetyl-CoA',f:'세포질'},{t:'malonyl-CoA',f:'C3 공여체'},{t:'팔미트산',f:'palmitate, C16:0'},{t:'스테아로일-CoA',f:'stearoyl-CoA, C18:0'},{t:'올레오일-CoA',f:'oleoyl-CoA, C18:1'}],
+  via:['SLC25A1','ACLY','ACC1 (+ HCO₃⁻, 비오틴)','FASN (× 7, NADPH 14)','ACSL → ELOVL6','SCD1'],
+  quiz:[
+    {q:'지방산 합성의 율속 효소와 보조인자는?', opts:['ACC1, 비오틴','FASN, TPP','ACLY, PLP','SCD1, B12'], ex:'ACC1이 acetyl-CoA에 CO₂를 붙여 malonyl-CoA를 만듭니다. 카복실화 효소는 대개 비오틴을 씁니다(PC, PCC도 마찬가지).'},
+    {q:'팔미트산(C16:0) 1분자 합성에 필요한 malonyl-CoA와 NADPH의 수는?', opts:['malonyl-CoA 7, NADPH 14','malonyl-CoA 8, NADPH 16','malonyl-CoA 7, NADPH 7','malonyl-CoA 16, NADPH 8'], ex:'acetyl-CoA 1개가 시작점이고 malonyl-CoA 7개가 2탄소씩 더합니다. 한 바퀴에 환원 두 번(케토 → 알코올, 이중결합 → 단일결합)이 있어 NADPH 2개씩.'},
+    {q:'AMPK가 지방산 합성을 빠르게 끄는 방식은?', opts:['ACC1을 인산화해 억제한다','FASN을 분해한다','ACLY 전사를 끈다','SCD1을 활성화한다'], ex:'에너지가 부족하면 AMPK가 ACC1 Ser79를 인산화합니다. malonyl-CoA가 줄면 CPT1 억제도 풀려 β-산화가 켜집니다.'},
+    {q:'malonyl-CoA가 β-산화를 막는 표적은?', opts:['CPT1','ACSL4','FASN','HADHA'], ex:'malonyl-CoA가 CPT1을 억제해 새로 만든 지방산이 바로 미토콘드리아에서 태워지지 않게 합니다.'},
+    {q:'저산소 상태의 암세포가 세포질 acetyl-CoA를 얻는 대안 경로가 아닌 것은?', opts:['미토콘드리아 PDH 흐름 증가','아세트산 → ACSS2','글루타민 환원적 카복실화 → citrate → ACLY','지질 흡수 증가'], ex:'저산소에서는 HIF1α가 PDK1을 올려 PDH가 오히려 꺼집니다. 대신 아세트산(ACSS2), 글루타민 유래 citrate, 외부 지질을 씁니다.'},
+    {q:'SCD1 산물과 페롭토시스의 관계로 옳은 것은?', opts:['MUFA(올레산)가 막의 PUFA를 대체해 페롭토시스를 막는다','PUFA를 늘려 페롭토시스를 촉진한다','콜레스테롤을 만들어 페롭토시스를 막는다','페롭토시스와 무관하다'], ex:'MUFA는 과산화가 잘 일어나지 않습니다. 외부 MUFA를 ACSL3로 활성화해 막에 넣으면 페롭토시스 저항 상태가 됩니다(Magtanong 2019).'},
+    {q:'ACSL4 결손 세포가 페롭토시스에 저항하는 이유는?', opts:['PUFA가 인지질에 덜 들어가 과산화 기질이 줄어든다','GPX4가 늘어난다','철 흡수가 줄어든다','GSH가 늘어난다'], ex:'ACSL4는 아라키돈산 같은 PUFA를 CoA에 붙여 인지질로 보냅니다(Doll 2017, Nature Chemical Biology).'},
+    {q:'FASN이 최종적으로 내놓는 지방산은?', opts:['팔미트산 (C16:0)','스테아르산 (C18:0)','올레산 (C18:1)','아라키돈산 (C20:4)'], ex:'FASN의 thioesterase 도메인이 C16에서 사슬을 끊습니다. 더 긴 사슬은 소포체의 ELOVL이 만듭니다.'}
+  ]
+},
+{
+  id:'chol', grp:'lip', code:'STER', title:'콜레스테롤 (메발론산 경로)', short:'콜레스테롤', color:'--m-chol',
+  intro:'acetyl-CoA 세 분자로 메발론산을 만들고, 5탄소 단위(IPP)를 쌓아 FPP(C15)와 스쿠알렌(C30)을 거쳐 콜레스테롤(C27)로 갑니다. 중간산물 FPP는 단백질 prenylation, CoQ, 돌리콜로도 갈라집니다.',
+  keys:['acetyl-CoA × 3 → HMG-CoA → HMGCR(율속, 스타틴 표적) → 메발론산',
+        '메발론산 → IPP(C5) → FPP(C15): 갈림길 — 스쿠알렌(스테롤) · GGPP(prenylation) · CoQ 꼬리 · 돌리콜',
+        '조절: 소포체 콜레스테롤 ↓ → SCAP이 SREBP2를 골지로 → 절단 → HMGCR·LDLR 전사'],
+  steps:[
+    {e:'ACAT2', ef:'acetyl-CoA acetyltransferase 2 (세포질 thiolase)', ec:'2.3.1.9', s:'2 acetyl-CoA', p:'아세토아세틸-CoA + CoA', co:[], loc:'세포질', n:'콜레스테릴 에스터를 만드는 ACAT(SOAT1)과 이름이 겹치니 주의.'},
+    {e:'HMGCS1', ef:'HMG-CoA synthase 1 (세포질)', ec:'2.3.3.10', s:'아세토아세틸-CoA + acetyl-CoA', p:'HMG-CoA (3-hydroxy-3-methylglutaryl-CoA)', co:[], loc:'세포질', n:'미토콘드리아 HMGCS2는 같은 반응으로 케톤체를 만듭니다.'},
+    {e:'HMGCR', ef:'HMG-CoA reductase', ec:'1.1.1.34', s:'HMG-CoA + 2 NADPH', p:'메발론산 + CoA', co:['NADPH 2개'], loc:'소포체 막', n:'율속 단계이자 스타틴의 표적. 스테롤이 많으면 INSIG에 붙어 유비퀴틴화·분해되고, AMPK가 인산화해 억제합니다.'},
+    {e:'MVK · PMVK', ef:'mevalonate kinase · phosphomevalonate kinase', ec:'2.7.1.36 · 2.7.4.2', s:'메발론산 + 2 ATP', p:'메발론산-5-이인산', co:['ATP 2개'], loc:'세포질', n:'인산 두 개를 차례로 붙입니다.'},
+    {e:'MVD', ef:'mevalonate diphosphate decarboxylase', ec:'4.1.1.33', s:'메발론산-5-이인산 + ATP', p:'IPP (isopentenyl pyrophosphate, C5) + CO₂', co:['ATP'], loc:'세포질', n:'5탄소 이소프렌 단위가 완성됩니다.'},
+    {e:'IDI1 · FDPS', ef:'isopentenyl-diphosphate isomerase 1 · farnesyl diphosphate synthase', ec:'5.3.3.2 · 2.5.1.10', s:'IPP ⇌ DMAPP, DMAPP + 2 IPP', p:'FPP (farnesyl pyrophosphate, C15)', co:[], loc:'세포질', n:'FPP는 경로의 큰 갈림길입니다. FDPS는 비스포스포네이트(zoledronate)의 표적입니다.'},
+    {e:'FDFT1', ef:'squalene synthase', ec:'2.5.1.21', s:'2 FPP + NADPH', p:'스쿠알렌 (C30)', co:['NADPH'], loc:'소포체 막', n:'스테롤 합성 전용 첫 단계(결정 단계).'},
+    {e:'SQLE', ef:'squalene epoxidase (squalene monooxygenase)', ec:'1.14.14.17', s:'스쿠알렌 + O₂ + NADPH', p:'2,3-옥시도스쿠알렌', co:['FAD','NADPH','O₂'], loc:'소포체 막', n:'두 번째 조절점. 콜레스테롤이 많으면 MARCHF6가 SQLE를 분해합니다. SQLE가 없는 림프종은 쌓인 스쿠알렌으로 페롭토시스를 견딥니다(Garcia-Bermudez 2019, Nature).'},
+    {e:'LSS', ef:'lanosterol synthase', ec:'5.4.99.7', s:'2,3-옥시도스쿠알렌', p:'라노스테롤', co:[], loc:'소포체 막', n:'한 번에 네 개의 고리를 닫는 고리화 반응입니다.'},
+    {e:'CYP51A1 → … → DHCR7', ef:'lanosterol 14α-demethylase에서 7-dehydrocholesterol reductase까지 약 19단계', ec:'여러 효소', s:'라노스테롤', p:'콜레스테롤 (C27)', co:['O₂','NADPH'], loc:'소포체 막', noquiz:true, n:'Bloch·Kandutsch-Russell 두 갈래가 있습니다. DHCR7 결손은 Smith-Lemli-Opitz 증후군. 중간산물 7-dehydrocholesterol(7-DHC)이 페롭토시스를 억제한다는 2024년 Nature 연구가 있습니다(Freitas 2024; Li 2024).'}
+  ],
+  side:[
+    {e:'GGPS1', ef:'geranylgeranyl diphosphate synthase 1', ec:'2.5.1.29', s:'FPP + IPP', p:'GGPP (geranylgeranyl pyrophosphate, C20)', co:[], loc:'세포질', n:'Rho·Rab 계열 GTPase의 geranylgeranylation 재료.'},
+    {e:'FNTA/FNTB', ef:'protein farnesyltransferase', ec:'2.5.1.58', s:'FPP + CaaX 단백질 (예: RAS)', p:'파르네실화 단백질', co:[], loc:'세포질', n:'RAS를 막에 붙입니다. FTase를 막으면 KRAS·NRAS는 GGTase-I로 우회합니다.'},
+    {e:'COQ2', ef:'4-hydroxybenzoate polyprenyltransferase', ec:'2.5.1.39', s:'4-HB (4-hydroxybenzoate) + 폴리프레닐-PP', p:'CoQ 전구체', co:[], loc:'미토콘드리아 내막', n:'CoQ의 꼬리가 메발론산 경로에서 옵니다. 그래서 스타틴이 CoQ도 낮춥니다.'},
+    {e:'DHDDS', ef:'dehydrodolichyl diphosphate synthase', ec:'2.5.1.87', s:'FPP + 여러 IPP', p:'디하이드로돌리콜-PP → 돌리콜', co:[], loc:'소포체', n:'돌리콜 인산은 N-glycosylation의 지질 운반체입니다. ALG5(dolichyl-phosphate β-glucosyltransferase)도 돌리콜 인산을 씁니다.'},
+    {e:'LDLR', ef:'low-density lipoprotein receptor', ec:'수용체', s:'혈중 LDL', p:'리소좀 → 유리 콜레스테롤', co:[], loc:'원형질막', n:'SREBP2 표적이고 PCSK9가 분해를 촉진합니다. 많은 암세포는 합성보다 흡수에 기댑니다.'},
+    {e:'SOAT1', ef:'sterol O-acyltransferase 1 (ACAT1)', ec:'2.3.1.26', s:'콜레스테롤 + acyl-CoA', p:'콜레스테릴 에스터', co:[], loc:'소포체', n:'남는 콜레스테롤을 지질방울에 저장합니다.'}
+  ],
+  notes:['SREBP2–SCAP–INSIG: 소포체 막 콜레스테롤이 떨어지면 SCAP이 SREBP2를 골지로 데려가 S1P·S2P가 잘라 핵으로 보냅니다. 콜레스테롤이나 25-hydroxycholesterol이 많으면 INSIG가 SCAP을 붙잡아 이 과정을 막습니다.'],
+  order:[{t:'acetyl-CoA',f:'× 3'},{t:'아세토아세틸-CoA',f:'acetoacetyl-CoA'},{t:'HMG-CoA',f:'3-hydroxy-3-methylglutaryl-CoA'},{t:'메발론산',f:'mevalonate'},{t:'메발론산-5-이인산',f:'mevalonate-5-diphosphate'},{t:'IPP',f:'isopentenyl pyrophosphate, C5'},{t:'FPP',f:'farnesyl pyrophosphate, C15'},{t:'스쿠알렌',f:'squalene, C30'},{t:'2,3-옥시도스쿠알렌',f:'2,3-oxidosqualene'},{t:'라노스테롤',f:'lanosterol'},{t:'콜레스테롤',f:'cholesterol, C27'}],
+  via:['ACAT2','HMGCS1 (+ acetyl-CoA)','HMGCR (스타틴)','MVK · PMVK','MVD (− CO₂)','IDI1 · FDPS (+ 2 IPP)','FDFT1 (FPP × 2)','SQLE','LSS','CYP51A1 → … → DHCR7'],
+  quiz:[
+    {q:'메발론산 경로의 율속 효소와 그 억제제는?', opts:['HMGCR, 스타틴','FDFT1, 비스포스포네이트','SQLE, 테르비나핀','ACAT2, 에제티미브'], ex:'HMGCR이 HMG-CoA를 메발론산으로 환원합니다(NADPH 2개). 스타틴은 HMG-CoA와 닮은 경쟁적 억제제입니다.'},
+    {q:'메발론산 경로에서 만들어지지 않는 것은?', opts:['스핑고신','CoQ의 폴리프레닐 꼬리','돌리콜','단백질 prenylation용 FPP·GGPP'], ex:'스핑고신은 세린 + 팔미토일-CoA(SPT)에서 시작합니다. 나머지는 모두 FPP에서 갈라집니다.'},
+    {q:'스테롤 합성 전용 첫 단계(결정 단계)의 효소는?', opts:['FDFT1 (squalene synthase)','HMGCR','FDPS','LSS'], ex:'FPP까지는 prenylation·CoQ·돌리콜과 공유하는 단계이고, FPP 두 개를 붙여 스쿠알렌을 만드는 순간부터 스테롤 전용입니다.'},
+    {q:'세포 콜레스테롤이 부족할 때 SREBP2가 활성화되는 순서는?', opts:['SCAP이 SREBP2를 골지로 운반 → S1P·S2P 절단 → 핵으로 이동','핵에서 바로 전사 시작','INSIG가 SREBP2를 인산화','LDLR이 SREBP2를 리소좀으로 운반'], ex:'콜레스테롤이 충분하면 INSIG가 SCAP을 소포체에 붙잡아 둡니다. 부족하면 이 결합이 풀려 SREBP2가 골지로 가서 잘립니다.'},
+    {q:'IPP가 이루는 기본 단위의 탄소 수는?', opts:['5 (이소프렌)','2','10','15'], ex:'IPP(C5) → GPP(C10) → FPP(C15) → GGPP(C20). 스쿠알렌(C30)은 FPP 두 개, 콜레스테롤(C27)은 라노스테롤(C30)에서 탄소 세 개를 뗀 것입니다.'},
+    {q:'스타틴이 CoQ 농도도 낮추는 이유는?', opts:['CoQ의 폴리프레닐 꼬리가 FPP에서 오기 때문','CoQ가 콜레스테롤에서 만들어지기 때문','스타틴이 COQ2를 직접 억제하기 때문','CoQ가 LDL로만 공급되기 때문'], ex:'메발론산 흐름이 줄면 FPP 이후 모든 가지가 함께 줄어듭니다. CoQ의 머리기(4-HB)는 따로 티로신에서 옵니다.'},
+    {q:'SQLE가 없는 ALK 양성 림프종이 페롭토시스에 강했던 이유는?', opts:['쌓인 스쿠알렌이 막 지질 과산화를 막았다','콜레스테롤이 더 많아졌다','GPX4가 늘었다','철 흡수가 줄었다'], ex:'콜레스테롤을 외부에서 얻는 림프종에서 SQLE 손실로 스쿠알렌이 쌓였고, 이것이 항산화 역할을 했습니다(Garcia-Bermudez 2019, Nature).'},
+    {q:'RAS의 막 부착에 쓰이는 지질 수식과 그 재료는?', opts:['파르네실화, FPP','팔미토일화만, 팔미트산','미리스토일화, 미리스트산','GPI 앵커, 포스파티딜이노시톨'], ex:'FNTA/FNTB가 CaaX 끝에 FPP를 붙입니다. FTase 억제제를 쓰면 KRAS·NRAS는 GGTase-I로 geranylgeranyl을 붙여 우회합니다.'}
+  ]
+},
+{
+  id:'neaa', grp:'aa', code:'NEAA', title:'비필수 아미노산', short:'비필수 아미노산', color:'--m-neaa',
+  intro:'글루타민에서 출발해 글루탐산, α-KG, TCA 회로를 거쳐 아스파르트산과 아스파라긴을 만드는 줄기가 중심입니다. 아미노기 전이효소(transaminase)가 질소를 돌려 쓰고, 프롤린·알라닌·글루타민 합성이 곁가지로 붙습니다.',
+  keys:['글루타민 → (GLS) 글루탐산 → (GLUD1 또는 아미노기 전이) α-KG → TCA → 옥살아세트산 → (GOT2) 아스파르트산 → (ASNS) 아스파라긴',
+        '아스파르트산 합성은 NAD⁺ 재생이 필요해 전자전달계에 의존',
+        '세린·글리신·시스테인은 각 탭 참고. 티로신은 페닐알라닌에서(PAH)'],
+  steps:[
+    {e:'GLS', ef:'glutaminase (GLS1: KGA·GAC, GLS2)', ec:'3.5.1.2', s:'글루타민 + H₂O', p:'글루탐산 + NH₄⁺', co:[], loc:'미토콘드리아', n:'MYC가 GLS를 올립니다. telaglenastat(CB-839)의 표적이고, KEAP1 변이 폐암이 특히 민감합니다(Romero 2017, Nature Medicine).'},
+    {e:'GLUD1', ef:'glutamate dehydrogenase 1', ec:'1.4.1.3', s:'글루탐산 + NAD(P)⁺', p:'α-KG + NH₄⁺ + NAD(P)H', co:['NAD(P)⁺'], loc:'미토콘드리아', n:'질소를 암모니아로 버리는 길. 증식 세포는 대신 아미노기 전이효소(GOT2·GPT2·PSAT1)로 질소를 다른 아미노산에 넘기는 쪽을 주로 씁니다(Coloff 2016, Cell Metabolism).'},
+    {e:'TCA 회로', ef:'α-KG → 숙시닐-CoA → 숙신산 → 푸마르산 → 말산 → 옥살아세트산', ec:'여러 효소', s:'α-KG', p:'옥살아세트산', co:['NADH 2곳 (OGDH · MDH2)','CoQH₂ 1곳 (SDH)'], loc:'미토콘드리아', noquiz:true, n:'마지막 MDH2(malate dehydrogenase 2) 단계가 NAD⁺를 요구합니다. 전자전달계가 막히면 여기서 멈춥니다.'},
+    {e:'GOT2', ef:'glutamic-oxaloacetic transaminase 2 (미토콘드리아 aspartate aminotransferase)', ec:'2.6.1.1', s:'옥살아세트산 + 글루탐산', p:'아스파르트산 + α-KG', co:['PLP'], loc:'미토콘드리아', n:'아스파르트산은 SLC25A12/13(aralar·citrin)으로 세포질로 나가 퓨린·피리미딘·아스파라긴·단백질 합성에 쓰입니다.'},
+    {e:'ASNS', ef:'asparagine synthetase', ec:'6.3.5.4', s:'아스파르트산 + 글루타민 + ATP', p:'아스파라긴 + 글루탐산 + AMP + PPi', co:['ATP'], loc:'세포질', n:'ATF4 표적. ASNS가 낮은 백혈병 세포는 asparaginase에 민감합니다. 글루타민이 부족할 때 아스파라긴이 생존을 지킵니다(Zhang 2014, Molecular Cell).'}
+  ],
+  side:[
+    {e:'GLUL', ef:'glutamine synthetase', ec:'6.3.1.2', s:'글루탐산 + NH₄⁺ + ATP', p:'글루타민', co:['ATP'], loc:'세포질', n:'글루타민을 새로 만드는 유일한 효소. 글루타민이 부족한 교모세포종에서 중요합니다(Tardito 2015, Nature Cell Biology).'},
+    {e:'ALDH18A1', ef:'pyrroline-5-carboxylate synthase (P5CS)', ec:'2.7.2.11 · 1.2.1.41', s:'글루탐산 + ATP + NAD(P)H', p:'P5C (pyrroline-5-carboxylate)', co:['ATP','NAD(P)H'], loc:'미토콘드리아', n:'프롤린 합성의 첫 효소(두 기능 효소).'},
+    {e:'PYCR1', ef:'pyrroline-5-carboxylate reductase 1', ec:'1.5.1.2', s:'P5C + NAD(P)H', p:'프롤린', co:['NAD(P)H → NAD(P)⁺'], loc:'미토콘드리아', n:'여러 암에서 가장 자주 올라가는 대사 유전자 중 하나. 콜라겐 재료이자 환원 당량을 산화하는 통로입니다.'},
+    {e:'GPT2', ef:'glutamic-pyruvic transaminase 2 (ALT2)', ec:'2.6.1.2', s:'피루브산 + 글루탐산', p:'알라닌 + α-KG', co:['PLP'], loc:'미토콘드리아', n:'가역 반응. 췌장암은 주변 stellate 세포가 내보낸 알라닌을 거꾸로 피루브산으로 바꿔 씁니다(Sousa 2016, Nature).'},
+    {e:'GOT1', ef:'glutamic-oxaloacetic transaminase 1 (세포질)', ec:'2.6.1.1', s:'아스파르트산 + α-KG', p:'옥살아세트산 + 글루탐산', co:['PLP'], loc:'세포질', n:'KRAS 췌장암은 GOT1 → MDH1 → ME1 경로로 NADPH를 만듭니다(Son 2013, Nature).'},
+    {e:'PAH', ef:'phenylalanine hydroxylase', ec:'1.14.16.1', s:'페닐알라닌 + O₂ + BH4', p:'티로신', co:['BH4 (tetrahydrobiopterin)','Fe²⁺'], loc:'간', n:'티로신은 페닐알라닌이 있어야만 만들 수 있어 조건부 필수입니다. 결손 = 페닐케톤뇨증.'}
+  ],
+  notes:['비필수 아미노산도 암에서는 조건부 필수가 됩니다. 세포가 만드는 속도보다 쓰는 속도가 빠르거나(아스파르트산), 합성 효소가 꺼져 있으면(ASNS 낮은 백혈병, ASS1 침묵 암의 아르지닌) 외부 공급에 의존합니다.'],
+  order:[{t:'글루타민',f:'glutamine'},{t:'글루탐산',f:'glutamate'},{t:'α-KG',f:'α-ketoglutarate'},{t:'옥살아세트산',f:'oxaloacetate'},{t:'아스파르트산',f:'aspartate'},{t:'아스파라긴',f:'asparagine'}],
+  via:['GLS (− NH₄⁺)','GLUD1 또는 아미노기 전이효소','TCA 회로 (MDH2에 NAD⁺ 필요)','GOT2 (+ 글루탐산)','ASNS (+ 글루타민, ATP)'],
+  quiz:[
+    {q:'아스파르트산 합성이 전자전달계에 의존하는 직접적 이유는?', opts:['말산 → 옥살아세트산(MDH2) 단계가 NAD⁺를 요구한다','GOT2가 ATP를 쓴다','아스파르트산이 산소와 직접 반응한다','글루타민 흡수가 전자전달계에 의존한다'], ex:'전자전달계가 NADH를 산화해 NAD⁺를 돌려줘야 TCA 회로의 산화 단계가 돕니다. 막히면 아스파르트산이 고갈되고, 피루브산(LDH로 NAD⁺ 재생)이나 아스파르트산 보충이 증식을 되살립니다.'},
+    {q:'증식하는 세포가 글루탐산을 α-KG로 바꿀 때 주로 쓰는 방식은?', opts:['아미노기 전이효소(GOT2·GPT2·PSAT1)','GLUD1 산화적 탈아미노화','GLS','ASNS'], ex:'아미노기 전이는 질소를 버리지 않고 다른 아미노산 합성에 넘깁니다. 휴지기 세포는 GLUD1을 더 씁니다(Coloff 2016, Cell Metabolism).'},
+    {q:'백혈병 치료제 asparaginase가 듣는 이유는?', opts:['백혈병 세포가 ASNS가 낮아 혈중 아스파라긴에 의존한다','아스파라긴이 DNA에 들어간다','asparaginase가 DNA를 자른다','백혈병 세포가 아스파르트산을 못 만든다'], ex:'혈중 아스파라긴을 분해하면 ASNS가 낮은 세포만 굶습니다. ASNS가 올라가면 내성이 생깁니다.'},
+    {q:'GLS 억제제 telaglenastat(CB-839)에 특히 민감하다고 보고된 폐암 유형은?', opts:['KEAP1 변이 (NRF2 활성) 폐암','EGFR 변이 폐암','ALK 융합 폐암','소세포폐암'], ex:'NRF2 활성 세포는 시스틴을 들여오며 글루탐산을 내보내고(SLC7A11), GSH 합성에도 글루탐산이 필요해 글루타민 의존이 커집니다(Romero 2017, Nature Medicine).'},
+    {q:'KRAS 췌장암의 GOT1 → MDH1 → ME1 경로가 만들어내는 것은?', opts:['NADPH','ATP','아스파라긴','프롤린'], ex:'미토콘드리아에서 나온 아스파르트산을 세포질에서 옥살아세트산 → 말산 → 피루브산으로 바꾸며 ME1이 NADPH를 만듭니다(Son 2013, Nature).'},
+    {q:'췌장암 세포가 주변 stellate 세포에게서 받아 연료로 쓰는 아미노산은?', opts:['알라닌','세린','아르지닌','트립토판'], ex:'stellate 세포가 autophagy로 알라닌을 내보내고, 암세포는 GPT2로 피루브산을 만들어 TCA에 씁니다(Sousa 2016, Nature).'},
+    {q:'프롤린 합성 효소의 순서는?', opts:['ALDH18A1(P5CS) → PYCR1','PYCR1 → ALDH18A1','OAT → PRODH','GLS → GLUL'], ex:'글루탐산 → P5C(P5CS, ATP·NAD(P)H) → 프롤린(PYCR1, NAD(P)H). 오르니틴도 OAT로 P5C가 될 수 있습니다.'},
+    {q:'글루타민을 새로 만드는 효소는?', opts:['GLUL (glutamine synthetase)','GLS','ASNS','GOT2'], ex:'글루탐산 + NH₄⁺ + ATP → 글루타민. 글루타민이 부족한 종양 환경에서 GLUL이 중요해집니다.'}
+  ]
+},
+{
+  id:'urea', grp:'aa', code:'UREA', title:'요소 회로 · 아르지닌', short:'요소 회로·아르지닌', color:'--m-urea',
+  intro:'간에서 질소를 요소로 버리는 회로지만, 암세포는 회로 전체가 아니라 일부 효소만 골라 피리미딘·아르지닌·폴리아민 합성에 씁니다. 앞 두 단계는 미토콘드리아, 뒤 세 단계는 세포질입니다.',
+  keys:['CPS1(NAG 필요) → OTC → [미토콘드리아 | 세포질] → ASS1(+ 아스파르트산) → ASL(− 푸마르산) → ARG1',
+        '요소의 두 질소: 하나는 NH₄⁺(CPS1), 하나는 아스파르트산(ASS1)',
+        '암: ASS1 침묵 → 아르지닌 외부 의존 + 아스파르트산을 피리미딘 합성으로 돌림'],
+  steps:[
+    {e:'CPS1', ef:'carbamoyl-phosphate synthetase 1', ec:'6.3.4.16', s:'NH₄⁺ + HCO₃⁻ + 2 ATP', p:'카바모일인산', co:['N-아세틸글루탐산 (필수 활성화)','ATP 2개'], loc:'미토콘드리아', n:'율속 단계. KRAS/LKB1 변이 폐암에서는 이 카바모일인산이 피리미딘 합성으로 갑니다(Kim 2017, Nature).'},
+    {e:'OTC', ef:'ornithine transcarbamylase', ec:'2.1.3.3', s:'카바모일인산 + 오르니틴', p:'시트룰린 + Pi', co:[], loc:'미토콘드리아', n:'시트룰린은 SLC25A15(ORNT1)로 오르니틴과 교환되어 세포질로 나갑니다. OTC 결손(X 연관)은 가장 흔한 요소 회로 질환입니다.'},
+    {e:'ASS1', ef:'argininosuccinate synthase 1', ec:'6.3.4.5', s:'시트룰린 + 아스파르트산 + ATP', p:'아르지니노숙신산 + AMP + PPi', co:['ATP'], loc:'세포질', n:'두 번째 질소가 아스파르트산에서 들어옵니다. 흑색종·간암·중피종 등에서 침묵되어 아르지닌을 외부에 의존하고, arginine deiminase(ADI-PEG20)의 표적이 됩니다.'},
+    {e:'ASL', ef:'argininosuccinate lyase', ec:'4.3.2.1', s:'아르지니노숙신산', p:'아르지닌 + 푸마르산', co:[], loc:'세포질', n:'아스파르트산의 골격은 푸마르산으로 TCA 쪽에 돌아갑니다(퓨린 ADSL 반응과 같은 논리).'},
+    {e:'ARG1', ef:'arginase 1', ec:'3.5.3.1', s:'아르지닌 + H₂O', p:'오르니틴 + 요소', co:['Mn²⁺'], loc:'세포질 (간)', n:'골수유래억제세포(MDSC)와 종양 대식세포가 ARG1로 아르지닌을 고갈시켜 T 세포를 억제합니다.'}
+  ],
+  side:[
+    {e:'NAGS', ef:'N-acetylglutamate synthase', ec:'2.3.1.1', s:'글루탐산 + acetyl-CoA', p:'N-아세틸글루탐산 (NAG)', co:[], loc:'미토콘드리아', n:'CPS1의 필수 활성제를 만듭니다. 아르지닌이 NAGS를 활성화합니다.'},
+    {e:'NOS', ef:'nitric oxide synthase (NOS1–3)', ec:'1.14.13.39', s:'아르지닌 + O₂ + NADPH', p:'시트룰린 + NO', co:['BH4','FAD · FMN','헴'], loc:'세포질', n:'요소 회로 밖에서 시트룰린이 생기는 길.'},
+    {e:'ODC1', ef:'ornithine decarboxylase 1', ec:'4.1.1.17', s:'오르니틴', p:'퓨트레신 + CO₂', co:['PLP'], loc:'세포질', n:'폴리아민 합성의 율속 단계이자 MYC 표적. 억제제 DFMO(eflornithine)가 고위험 신경모세포종 유지요법으로 2023년 FDA 승인을 받았습니다.'},
+    {e:'AMD1', ef:'adenosylmethionine decarboxylase 1', ec:'4.1.1.50', s:'SAM', p:'탈카복실화 SAM (dcSAM) + CO₂', co:[], loc:'세포질', n:'dcSAM이 퓨트레신에 아미노프로필기를 줘 스페르미딘(SRM)·스페르민을 만들고, 부산물 MTA는 MTAP로 메티오닌 회로에 돌아갑니다.'},
+    {e:'OAT', ef:'ornithine aminotransferase', ec:'2.6.1.13', s:'오르니틴 + α-KG', p:'P5C + 글루탐산', co:['PLP'], loc:'미토콘드리아', n:'오르니틴과 프롤린·글루탐산을 잇는 가역 다리.'}
+  ],
+  notes:['대부분의 암세포에는 완전한 요소 회로가 없습니다. 효소 발현이 바뀌면서 질소가 요소로 버려지지 않고 피리미딘 같은 동화 경로로 흘러갑니다(Keshet 2018, Nature Reviews Cancer).'],
+  order:[{t:'NH₄⁺ + HCO₃⁻',f:'+ 2 ATP'},{t:'카바모일인산',f:'carbamoyl phosphate'},{t:'시트룰린',f:'citrulline'},{t:'아르지니노숙신산',f:'argininosuccinate'},{t:'아르지닌',f:'arginine'},{t:'오르니틴 + 요소',f:'ornithine + urea'}],
+  via:['CPS1 (NAG 필요)','OTC (+ 오르니틴)','ASS1 (+ 아스파르트산, ATP)','ASL (− 푸마르산)','ARG1'],
+  quiz:[
+    {q:'CPS1이 작동하는 데 꼭 필요한 알로스테릭 활성제는?', opts:['N-아세틸글루탐산','PRPP','UTP','아르지닌'], ex:'NAGS가 글루탐산 + acetyl-CoA로 만듭니다. 아르지닌은 NAGS를 활성화해 간접적으로 CPS1을 켭니다. CPS2(피리미딘)는 PRPP로 활성화되니 구분하세요.'},
+    {q:'요소의 두 번째 질소를 주는 것은?', opts:['아스파르트산 (ASS1 단계)','글루타민 (CPS1 단계)','글리신','오르니틴'], ex:'첫 질소는 CPS1이 쓰는 NH₄⁺, 두 번째는 ASS1이 붙이는 아스파르트산의 아미노기입니다.'},
+    {q:'요소 회로에서 미토콘드리아 안에서 일어나는 단계는?', opts:['CPS1과 OTC','ASS1과 ASL','ASL과 ARG1','OTC와 ASS1'], ex:'앞 두 단계는 미토콘드리아, 시트룰린이 세포질로 나간 뒤 세 단계는 세포질입니다.'},
+    {q:'ASS1이 침묵된 암세포의 치료적 약점은?', opts:['외부 아르지닌 의존 → arginine deiminase(ADI-PEG20)로 아르지닌 고갈','아스파라긴 의존 → asparaginase','글루타민 의존 → GLS 억제','세린 의존 → PHGDH 억제'], ex:'ASS1이 없으면 시트룰린에서 아르지닌을 만들 수 없어 혈중 아르지닌에 기댑니다.'},
+    {q:'ASS1 소실이 암세포 증식에 유리했던 이유로 제시된 것은?', opts:['아껴진 아스파르트산이 CAD를 거쳐 피리미딘 합성에 쓰인다','아르지닌이 늘어난다','요소가 더 많이 배출된다','푸마르산이 쌓여 항산화 효과를 낸다'], ex:'아스파르트산을 요소 회로에 쓰지 않고 피리미딘 합성으로 돌린다는 연구입니다(Rabinovich 2015, Nature).'},
+    {q:'OTC 결손 환자의 소변에 오로트산이 늘어나는 이유는?', opts:['쌓인 카바모일인산이 세포질로 넘쳐 피리미딘 경로(ATCase)로 들어간다','DHODH가 활성화된다','UMPS가 결손된다','요소가 오로트산으로 바뀐다'], ex:'미토콘드리아에서 쓰이지 못한 카바모일인산이 CAD의 ATCase 단계로 흘러 오로트산이 과다 생성됩니다. 요소 회로와 피리미딘 합성이 만나는 지점입니다.'},
+    {q:'폴리아민 합성 율속 효소 ODC1의 억제제는?', opts:['DFMO (eflornithine)','PALA','brequinar','mycophenolic acid'], ex:'DFMO는 ODC1을 비가역적으로 억제합니다. 고위험 신경모세포종의 유지요법으로 승인되었습니다(MYCN이 ODC1을 올리는 것이 근거 중 하나).'},
+    {q:'종양 미세환경의 골수유래억제세포(MDSC)가 T 세포를 억제하는 대사 기전은?', opts:['ARG1로 아르지닌을 고갈시킨다','글루타민을 분비한다','ASS1으로 아르지닌을 만든다','요소를 분비한다'], ex:'아르지닌이 부족하면 T 세포의 증식과 TCR 신호가 떨어집니다.'}
+  ]
+},
+{
+  id:'glyc', grp:'energy', code:'GLY', title:'해당과정', short:'해당과정', color:'--m-glyc',
+  intro:'포도당 1분자를 피루브산 2분자로 쪼개며 ATP 2개(순)와 NADH 2개를 얻습니다. 앞 다섯 단계는 ATP를 투자하고 뒤 다섯 단계에서 회수합니다. 비가역 조절점은 HK, PFK1, PK 세 곳입니다.',
+  keys:['투자기: HK → GPI → PFK1(율속) → ALDOA → TPI1 / 회수기: GAPDH → PGK1 → PGAM1 → ENO1 → PK',
+        '포도당 1개 → 피루브산 2개 + ATP 2개(순) + NADH 2개',
+        '조절: PFK1은 ATP·citrate가 억제하고 AMP·F2,6BP(과당-2,6-이인산)가 활성화. PK는 F1,6BP가 앞먹임 활성화'],
+  steps:[
+    {e:'HK2', ef:'hexokinase 2 (간은 glucokinase, GCK)', ec:'2.7.1.1', s:'포도당 + ATP', p:'포도당-6-인산 (G6P) + ADP', co:['ATP 소모','Mg²⁺'], loc:'세포질 (HK2는 미토콘드리아 외막에 결합)', n:'G6P가 HK1–3을 억제합니다(GCK는 억제되지 않음). 인산화된 포도당은 세포 밖으로 못 나가므로 FDG-PET에서 종양에 쌓입니다.'},
+    {e:'GPI', ef:'glucose-6-phosphate isomerase', ec:'5.3.1.9', s:'포도당-6-인산', p:'과당-6-인산 (F6P)', co:[], loc:'세포질', n:'가역 반응. 알도스를 케토스로 바꿉니다.'},
+    {e:'PFK1', ef:'phosphofructokinase-1 (PFKL · PFKM · PFKP)', ec:'2.7.1.11', s:'과당-6-인산 + ATP', p:'과당-1,6-이인산 (F1,6BP) + ADP', co:['ATP 소모'], loc:'세포질', n:'율속·결정 단계. ATP와 citrate가 억제하고, AMP와 F2,6BP가 활성화합니다. F2,6BP는 PFKFB가 만듭니다.'},
+    {e:'ALDOA', ef:'aldolase A', ec:'4.1.2.13', s:'과당-1,6-이인산', p:'DHAP (dihydroxyacetone phosphate) + 글리세르알데하이드-3-인산 (GAP)', co:[], loc:'세포질', n:'6탄당이 3탄당 두 개로 갈라집니다.'},
+    {e:'TPI1', ef:'triosephosphate isomerase 1', ec:'5.3.1.1', s:'DHAP', p:'글리세르알데하이드-3-인산', co:[], loc:'세포질', n:'속도가 확산 한계에 가까운 효소입니다. DHAP는 글리세롤-3-인산(지질 골격)으로도 빠집니다.'},
+    {e:'GAPDH', ef:'glyceraldehyde-3-phosphate dehydrogenase', ec:'1.2.1.12', s:'글리세르알데하이드-3-인산 + NAD⁺ + Pi', p:'1,3-BPG (1,3-bisphosphoglycerate) + NADH', co:['NAD⁺ → NADH'], loc:'세포질', n:'NAD⁺가 필요해 LDH나 셔틀로 NAD⁺를 재생해야 해당과정이 계속 돕니다. 활성 부위 시스테인이 산화에 약해, 산화 스트레스는 포도당 흐름을 PPP로 돌립니다.'},
+    {e:'PGK1', ef:'phosphoglycerate kinase 1', ec:'2.7.2.3', s:'1,3-BPG + ADP', p:'3-포스포글리세르산 (3-PG) + ATP', co:['ATP 생성'], loc:'세포질', n:'첫 번째 기질 수준 인산화. 포도당 1개당 두 번 일어나 투자한 ATP 2개를 회수합니다.'},
+    {e:'PGAM1', ef:'phosphoglycerate mutase 1', ec:'5.4.2.11', s:'3-포스포글리세르산', p:'2-포스포글리세르산 (2-PG)', co:['2,3-BPG (보조인자)'], loc:'세포질', n:'3-PG는 세린 합성(PHGDH)으로 빠지는 갈림길입니다.'},
+    {e:'ENO1', ef:'enolase 1', ec:'4.2.1.11', s:'2-포스포글리세르산', p:'PEP (phosphoenolpyruvate) + H₂O', co:['Mg²⁺'], loc:'세포질', n:'불소(fluoride)가 억제합니다. ENO1이 함께 결손된 교모세포종은 ENO2에 의존합니다(Muller 2012, Nature).'},
+    {e:'PKM2', ef:'pyruvate kinase M2 (간은 PKLR)', ec:'2.7.1.40', s:'PEP + ADP', p:'피루브산 + ATP', co:['ATP 생성','K⁺ · Mg²⁺'], loc:'세포질', n:'두 번째 기질 수준 인산화. F1,6BP와 세린이 활성화합니다. 암에 많은 PKM2는 활성이 낮은 형태가 많아 위쪽 중간산물을 생합성으로 보냅니다(Christofk 2008, Nature).'}
+  ],
+  side:[
+    {e:'LDHA', ef:'lactate dehydrogenase A', ec:'1.1.1.27', s:'피루브산 + NADH', p:'젖산 + NAD⁺', co:['NADH → NAD⁺'], loc:'세포질', n:'NAD⁺를 재생해 GAPDH를 계속 돌게 합니다. 젖산은 MCT1·MCT4(SLC16A1·SLC16A3)로 드나듭니다.'},
+    {e:'PFKFB3', ef:'6-phosphofructo-2-kinase/fructose-2,6-bisphosphatase 3', ec:'2.7.1.105', s:'과당-6-인산 + ATP', p:'과당-2,6-이인산 (F2,6BP)', co:['ATP'], loc:'세포질', n:'PFK1의 가장 강력한 활성제를 만듭니다. 키나제 활성이 높은 isoform이라 암과 증식 세포에서 해당과정을 밀어줍니다.'},
+    {e:'GLUT1', ef:'glucose transporter 1 (SLC2A1)', ec:'수송체', s:'세포 밖 포도당', p:'세포 안 포도당', co:[], loc:'원형질막', n:'촉진 확산 수송체. HIF1α와 MYC의 표적이고 많은 암에서 늘어 있습니다.'},
+    {e:'BPGM', ef:'bisphosphoglycerate mutase', ec:'5.4.2.4', s:'1,3-BPG', p:'2,3-BPG', co:[], loc:'적혈구', n:'2,3-BPG는 헤모글로빈의 산소 친화도를 낮춰 조직에 산소를 내놓게 합니다.'}
+  ],
+  notes:[],
+  order:[{t:'포도당',f:'glucose'},{t:'G6P',f:'glucose-6-phosphate'},{t:'F6P',f:'fructose-6-phosphate'},{t:'F1,6BP',f:'fructose-1,6-bisphosphate'},{t:'GAP × 2',f:'glyceraldehyde-3-phosphate'},{t:'1,3-BPG',f:'1,3-bisphosphoglycerate'},{t:'3-PG',f:'3-phosphoglycerate'},{t:'2-PG',f:'2-phosphoglycerate'},{t:'PEP',f:'phosphoenolpyruvate'},{t:'피루브산',f:'pyruvate'}],
+  via:['HK2 (− ATP)','GPI','PFK1 (− ATP, 율속)','ALDOA · TPI1','GAPDH (+ NADH)','PGK1 (+ ATP)','PGAM1','ENO1 (− H₂O)','PKM2 (+ ATP)'],
+  quiz:[
+    {q:'해당과정의 율속 효소와 가장 강력한 활성제는?', opts:['PFK1, 과당-2,6-이인산','HK2, 포도당-6-인산','PKM2, ATP','GAPDH, NAD⁺'], ex:'PFK1은 ATP·citrate로 억제되고 AMP·F2,6BP로 활성화됩니다. F2,6BP는 PFKFB가 만들며 호르몬과 성장 신호가 이 농도를 조절합니다.'},
+    {q:'포도당 1분자가 해당과정을 거칠 때 순수하게 얻는 것은?', opts:['ATP 2개 + NADH 2개 + 피루브산 2개','ATP 4개 + NADH 2개','ATP 2개 + NADPH 2개','ATP 36개'], ex:'투자 2 ATP(HK, PFK1), 회수 4 ATP(PGK1 × 2, PK × 2), GAPDH에서 NADH 2개.'},
+    {q:'NAD⁺를 소비하는 해당과정 단계는?', opts:['GAPDH','PGK1','ENO1','ALDOA'], ex:'GAPDH가 알데하이드를 산화해 고에너지 아실인산(1,3-BPG)을 만들며 NADH가 생깁니다. 그래서 NAD⁺ 재생(LDH, 셔틀, 전자전달계)이 해당과정의 속도를 좌우합니다.'},
+    {q:'해당과정에서 기질 수준 인산화가 일어나는 단계는?', opts:['PGK1과 PK','HK와 PFK1','GAPDH와 ENO1','GPI와 TPI1'], ex:'1,3-BPG와 PEP는 ATP보다 인산기 전달 퍼텐셜이 높아 ADP에 직접 인산을 넘깁니다.'},
+    {q:'PKM2의 낮은 활성이 증식 세포에 유리하다고 제안된 이유는?', opts:['위쪽 중간산물이 쌓여 세린·글리세롤·오탄당 합성으로 흘러간다','ATP를 더 많이 만든다','젖산 생성을 멈춘다','산소 소비를 늘린다'], ex:'PK에서 병목이 생기면 3-PG, DHAP, G6P 같은 분지점 대사물이 생합성으로 빠집니다(Christofk 2008, Nature).'},
+    {q:'FDG-PET에서 종양이 밝게 보이는 원리는?', opts:['FDG가 HK로 인산화된 뒤 다음 단계로 진행하지 못하고 세포 안에 갇힌다','FDG가 젖산으로 분비된다','FDG가 미토콘드리아에서 산화된다','FDG가 글리코겐에 저장된다'], ex:'2-deoxyglucose 유도체는 GPI의 기질이 되지 못합니다. 포도당 흡수와 HK 활성이 높을수록 많이 쌓입니다.'},
+    {q:'간의 glucokinase(GCK)가 다른 hexokinase와 다른 점은?', opts:['Km이 높고 G6P로 억제되지 않아 혈당이 높을 때만 일을 많이 한다','Km이 매우 낮다','미토콘드리아에만 있다','ATP 대신 GTP를 쓴다'], ex:'GCK는 혈당 센서처럼 작동하고 GKRP(glucokinase regulatory protein)가 핵에 붙잡아 조절합니다. 췌장 β세포에서도 같은 원리로 인슐린 분비를 정합니다.'},
+    {q:'산소가 있어도 젖산을 만드는 Warburg 효과에서 LDHA의 주된 의미는?', opts:['NAD⁺를 빠르게 재생해 GAPDH를 계속 돌린다','ATP를 직접 만든다','NADPH를 만든다','피루브산을 미토콘드리아로 보낸다'], ex:'미토콘드리아로 전자를 넘기는 것보다 빠르게 NAD⁺를 돌려받는 방법입니다.'}
+  ]
+},
+{
+  id:'tca', grp:'energy', code:'TCA', title:'TCA 회로 · PDH', short:'TCA 회로', color:'--m-tca',
+  intro:'피루브산이 PDH로 acetyl-CoA가 되어 옥살아세트산과 합쳐지고, 여덟 단계를 돌며 탄소 두 개를 CO₂로 내보내고 환원 당량을 만듭니다. 회로 중간산물은 생합성의 출발점이기도 합니다.',
+  keys:['PDH → CS → ACO2 → IDH3 → OGDH → SUCLG → SDH → FH → MDH2',
+        '한 바퀴: NADH 3 + FADH₂(→ CoQH₂) 1 + GTP 1 + CO₂ 2',
+        '조절: PDH(PDK가 끔), CS, IDH3(ADP·Ca²⁺가 켬), OGDH(Ca²⁺가 켬)'],
+  steps:[
+    {no:0, e:'PDH', ef:'pyruvate dehydrogenase complex (E1 PDHA1/PDHB · E2 DLAT · E3 DLD)', ec:'1.2.4.1', s:'피루브산 + CoA + NAD⁺', p:'acetyl-CoA + CO₂ + NADH', co:['TPP','리포산','CoA','FAD','NAD⁺'], loc:'미토콘드리아 기질', n:'비가역 단계. PDK가 E1α를 인산화해 끄고 PDP가 켭니다. acetyl-CoA와 NADH가 생성물 억제를 합니다.'},
+    {e:'CS', ef:'citrate synthase', ec:'2.3.3.1', s:'acetyl-CoA + 옥살아세트산', p:'citrate + CoA', co:[], loc:'미토콘드리아 기질', n:'옥살아세트산 농도가 속도를 좌우합니다. citrate, 숙시닐-CoA, ATP가 억제합니다.'},
+    {e:'ACO2', ef:'aconitase 2', ec:'4.2.1.3', s:'citrate', p:'isocitrate (cis-aconitate 경유)', co:['Fe-S 클러스터'], loc:'미토콘드리아 기질', n:'철–황 효소라 산화와 철 결핍에 약합니다. 세포질 ACO1은 철이 부족하면 IRP1로 변해 mRNA에 붙습니다.'},
+    {e:'IDH3', ef:'isocitrate dehydrogenase 3 (NAD⁺)', ec:'1.1.1.41', s:'isocitrate + NAD⁺', p:'α-KG + CO₂ + NADH', co:['NAD⁺ → NADH'], loc:'미토콘드리아 기질', n:'회로의 주 조절점. ADP와 Ca²⁺가 활성화하고 ATP와 NADH가 억제합니다. NADP⁺형 IDH1·IDH2는 별개 효소입니다.'},
+    {e:'OGDH', ef:'α-ketoglutarate dehydrogenase complex (OGDH · DLST · DLD)', ec:'1.2.4.2', s:'α-KG + CoA + NAD⁺', p:'숙시닐-CoA + CO₂ + NADH', co:['TPP','리포산','CoA','FAD','NAD⁺'], loc:'미토콘드리아 기질', n:'PDH와 같은 구조의 복합체이고 E3(DLD)를 공유합니다. Ca²⁺가 활성화하고 숙시닐-CoA·NADH가 억제합니다.'},
+    {e:'SUCLG1', ef:'succinyl-CoA synthetase (SUCLG1 + SUCLG2 GTP형 / SUCLA2 ATP형)', ec:'6.2.1.4', s:'숙시닐-CoA + GDP + Pi', p:'숙신산 + GTP + CoA', co:['GTP 또는 ATP 생성'], loc:'미토콘드리아 기질', n:'회로 유일의 기질 수준 인산화.'},
+    {e:'SDH', ef:'succinate dehydrogenase (SDHA–SDHD, complex II)', ec:'1.3.5.1', s:'숙신산 + CoQ', p:'푸마르산 + CoQH₂', co:['FAD (공유 결합)','Fe-S'], loc:'미토콘드리아 내막', n:'내막에 박힌 유일한 TCA 효소이자 전자전달계 complex II. 결손되면(부신경절종, 일부 GIST) 숙신산이 쌓여 종양대사물로 작용합니다.'},
+    {e:'FH', ef:'fumarate hydratase', ec:'4.2.1.2', s:'푸마르산 + H₂O', p:'L-말산', co:[], loc:'미토콘드리아 기질', n:'생식계열 결손은 유전성 평활근종·신세포암(HLRCC)을 일으킵니다. 쌓인 푸마르산은 단백질 시스테인에 붙습니다(succination).'},
+    {e:'MDH2', ef:'malate dehydrogenase 2', ec:'1.1.1.37', s:'L-말산 + NAD⁺', p:'옥살아세트산 + NADH', co:['NAD⁺ → NADH'], loc:'미토콘드리아 기질', n:'표준 자유에너지가 크게 양수인 반응이라, 옥살아세트산이 CS로 바로 소비되어야 진행됩니다.'}
+  ],
+  side:[
+    {e:'PC', ef:'pyruvate carboxylase', ec:'6.4.1.1', s:'피루브산 + HCO₃⁻ + ATP', p:'옥살아세트산 + ADP + Pi', co:['비오틴','ATP'], loc:'미토콘드리아 기질', n:'acetyl-CoA가 알로스테릭 활성화하는 대표적 보충 반응(anaplerosis). 비소세포폐암 환자 종양에서 PC 의존성이 보고됐습니다(Sellers 2015, JCI).'},
+    {e:'PDK1', ef:'pyruvate dehydrogenase kinase 1–4', ec:'2.7.11.2', s:'PDH (활성형) + ATP', p:'인산화 PDH (불활성형)', co:['ATP'], loc:'미토콘드리아 기질', n:'HIF1α가 PDK1을 유도해 피루브산을 젖산 쪽으로 보냅니다. dichloroacetate(DCA)가 PDK를 억제합니다.'},
+    {e:'IDH1/2', ef:'isocitrate dehydrogenase 1(세포질)·2(미토콘드리아), NADP⁺형', ec:'1.1.1.42', s:'isocitrate + NADP⁺', p:'α-KG + CO₂ + NADPH', co:['NADP⁺ ⇌ NADPH'], loc:'세포질 · 미토콘드리아', n:'가역. IDH1 R132, IDH2 R140·R172 변이는 α-KG를 D-2HG로 바꾸는 새 활성을 얻습니다. 억제제 ivosidenib, enasidenib, vorasidenib.'}
+  ],
+  notes:['첫 바퀴에 들어간 acetyl-CoA의 탄소 두 개는 그 바퀴에 CO₂로 나가지 않습니다. 나가는 CO₂ 두 개는 옥살아세트산에서 온 탄소입니다. ¹³C 추적에서 [U-¹³C]포도당이 citrate M+2를 만드는 이유입니다.'],
+  order:[{t:'피루브산',f:'pyruvate'},{t:'acetyl-CoA',f:'C2'},{t:'citrate',f:'C6'},{t:'isocitrate',f:'C6'},{t:'α-KG',f:'α-ketoglutarate, C5'},{t:'숙시닐-CoA',f:'succinyl-CoA, C4'},{t:'숙신산',f:'succinate'},{t:'푸마르산',f:'fumarate'},{t:'말산',f:'malate'},{t:'옥살아세트산',f:'oxaloacetate'}],
+  via:['PDH (+ NADH, − CO₂)','CS (+ 옥살아세트산)','ACO2','IDH3 (+ NADH, − CO₂)','OGDH (+ NADH, − CO₂)','SUCLG (+ GTP)','SDH (+ CoQH₂)','FH (+ H₂O)','MDH2 (+ NADH)'],
+  quiz:[
+    {q:'acetyl-CoA 1개가 TCA 회로를 한 바퀴 돌 때 생기는 것은?', opts:['NADH 3 + FADH₂(CoQH₂) 1 + GTP 1 + CO₂ 2','NADH 4 + ATP 2','NADPH 3 + CO₂ 2','NADH 2 + FADH₂ 2'], ex:'IDH3·OGDH·MDH2에서 NADH, SDH에서 CoQH₂, SUCLG에서 GTP가 나옵니다. PDH의 NADH는 회로 밖입니다.'},
+    {q:'TCA 회로의 주된 조절점으로 ADP와 Ca²⁺가 활성화하는 효소는?', opts:['IDH3','FH','ACO2','MDH2'], ex:'에너지가 부족하거나(ADP↑) 근육이 수축할 때(Ca²⁺↑) 회로가 빨라집니다. OGDH도 Ca²⁺로 활성화됩니다.'},
+    {q:'PDH 복합체가 쓰는 다섯 보조인자 조합은?', opts:['TPP, 리포산, CoA, FAD, NAD⁺','PLP, 비오틴, CoA, FAD, NAD⁺','TPP, B12, CoA, FMN, NADP⁺','비오틴, 리포산, CoA, FAD, NADH'], ex:'E1(TPP) → E2(리포산, CoA) → E3(FAD, NAD⁺). OGDH와 BCKDH도 같은 다섯 보조인자를 씁니다.'},
+    {q:'TCA 회로에서 기질 수준 인산화가 일어나는 효소는?', opts:['숙시닐-CoA 합성효소 (SUCLG)','SDH','CS','IDH3'], ex:'숙시닐-CoA의 티오에스터 에너지로 GTP(또는 ATP)를 만듭니다.'},
+    {q:'미토콘드리아 내막에 박혀 있는 TCA 효소는?', opts:['SDH','FH','MDH2','CS'], ex:'SDH는 전자전달계 complex II이기도 해서 전자를 CoQ로 바로 넘깁니다.'},
+    {q:'동물이 지방산의 acetyl-CoA로 포도당을 순수하게 만들 수 없는 이유는?', opts:['PDH가 비가역이고, TCA 회로에서 acetyl의 탄소만큼 CO₂가 빠져 옥살아세트산이 순증가하지 않는다','acetyl-CoA가 미토콘드리아를 나갈 수 없다','간에 PEPCK가 없다','acetyl-CoA가 너무 불안정하다'], ex:'식물과 세균은 글리옥실산 회로로 이 문제를 우회하지만 동물에는 없습니다. 홀수 사슬 지방산(프로피오닐-CoA)과 글리세롤은 예외적으로 포도당 재료가 됩니다.'},
+    {q:'FH 결손 종양에서 쌓이는 종양대사물은?', opts:['푸마르산','숙신산','D-2HG','시트르산'], ex:'푸마르산과 숙신산은 α-KG 의존 효소를 억제하고 HIF를 안정화합니다. D-2HG는 IDH 변이에서 쌓입니다.'},
+    {q:'PC(pyruvate carboxylase)를 알로스테릭 활성화하는 것은?', opts:['acetyl-CoA','옥살아세트산','ATP','citrate'], ex:'acetyl-CoA가 쌓이면 회로에 옥살아세트산이 부족하다는 신호이므로 PC가 켜집니다. PDH는 같은 acetyl-CoA에 억제됩니다.'}
+  ]
+},
+{
+  id:'oxphos', grp:'energy', code:'OX', title:'산화적 인산화 (전자전달계)', short:'산화적 인산화', color:'--m-oxphos',
+  intro:'NADH와 CoQH₂의 전자가 complex I·III·IV를 거쳐 산소로 가면서 양성자를 막간 공간으로 퍼냅니다. 이 양성자 기울기로 ATP 합성효소가 ATP를 만듭니다.',
+  keys:['전자 흐름: NADH → I → CoQ → III → cytochrome c → IV → O₂ (숙신산은 II → CoQ)',
+        'NADH 1개당 양성자 10개(I 4 + III 4 + IV 2) → 약 2.5 ATP, 숙신산은 6개 → 약 1.5 ATP',
+        '억제제: rotenone(I), antimycin A(III), 시안화물·CO(IV), oligomycin(V), FCCP(탈공역)'],
+  steps:[
+    {e:'Complex I', ef:'NADH:ubiquinone oxidoreductase (45개 소단위)', ec:'7.1.1.2', s:'NADH + CoQ + 5H⁺(기질)', p:'NAD⁺ + CoQH₂ + 4H⁺(막간)', co:['FMN','Fe-S 클러스터'], loc:'미토콘드리아 내막', n:'양성자 4개를 퍼냅니다. 억제제 rotenone, piericidin A, IACS-010759. 신장암 전이에 필요하다는 보고(Bezwada 2024, Nature).'},
+    {e:'Complex III', ef:'ubiquinol–cytochrome c oxidoreductase (cytochrome bc₁)', ec:'7.1.1.8', s:'CoQH₂ + 2 cytochrome c(산화형) + 2H⁺(기질)', p:'CoQ + 2 cytochrome c(환원형) + 4H⁺(막간)', co:['헴 b · c₁','Rieske Fe-S'], loc:'미토콘드리아 내막', n:'Q 회로로 양성자 4개를 막간에 내놓습니다. 억제제 antimycin A, myxothiazol. 미토콘드리아 ROS의 주요 생성 지점입니다.'},
+    {e:'Complex IV', ef:'cytochrome c oxidase', ec:'7.1.1.9', s:'4 cytochrome c(환원형) + O₂ + 8H⁺(기질)', p:'4 cytochrome c(산화형) + 2H₂O + 4H⁺(막간)', co:['헴 a · a₃','CuA · CuB'], loc:'미토콘드리아 내막', n:'산소가 최종 전자 수용체. 전자 2개당 양성자 2개를 퍼내고 2개는 물 생성에 씁니다. 시안화물, CO, 아자이드가 억제합니다.'},
+    {e:'Complex V', ef:'ATP synthase (F₀F₁)', ec:'7.1.2.2', s:'ADP + Pi + H⁺(막간 → 기질)', p:'ATP', co:[], loc:'미토콘드리아 내막', n:'c 고리가 회전하는 회전 촉매입니다. 포유류(c8 고리)는 ATP 1개에 양성자 약 2.7개 + 인산 수송에 1개. oligomycin이 억제합니다.'},
+    {e:'ANT', ef:'adenine nucleotide translocase (SLC25A4/5/6)', ec:'수송체', s:'기질 ATP + 막간 ADP', p:'막간 ATP + 기질 ADP', co:[], loc:'미토콘드리아 내막', n:'막전위를 써서 ATP를 내보냅니다. atractyloside와 bongkrekic acid가 억제합니다.'}
+  ],
+  side:[
+    {e:'SDH (Complex II)', ef:'succinate dehydrogenase', ec:'1.3.5.1', s:'숙신산 + CoQ', p:'푸마르산 + CoQH₂', co:['FAD','Fe-S'], loc:'미토콘드리아 내막', n:'양성자를 퍼내지 않습니다. 그래서 숙신산의 전자는 NADH보다 ATP를 적게 만듭니다. malonate가 경쟁적으로 억제합니다.'},
+    {e:'GPD2', ef:'glycerol-3-phosphate dehydrogenase 2 (미토콘드리아)', ec:'1.1.5.3', s:'글리세롤-3-인산 + CoQ', p:'DHAP + CoQH₂', co:['FAD'], loc:'미토콘드리아 내막 (바깥면)', n:'글리세롤인산 셔틀. 세포질 NADH의 전자를 complex I을 건너뛰고 CoQ로 넘겨 ATP 수율이 낮습니다.'},
+    {e:'SLC25A11 · SLC25A12/13', ef:'malate–α-KG carrier · aspartate–glutamate carrier (aralar · citrin)', ec:'수송체', s:'세포질 NADH (말산 형태)', p:'기질 NADH', co:[], loc:'미토콘드리아 내막', n:'말산–아스파르트산 셔틀. NADH는 내막을 못 건너므로 옥살아세트산을 말산으로 환원해 운반하고 안에서 다시 NADH를 만듭니다.'},
+    {e:'UCP1', ef:'uncoupling protein 1 (thermogenin)', ec:'수송체', s:'막간 H⁺', p:'기질 H⁺ + 열', co:[], loc:'갈색지방 미토콘드리아 내막', n:'양성자를 ATP 합성효소 없이 돌려보내 열을 냅니다. FCCP·DNP 같은 탈공역제도 같은 효과입니다.'}
+  ],
+  notes:['Seahorse mito stress test 순서: oligomycin(ATP 합성에 쓰이던 호흡이 빠짐) → FCCP(최대 호흡) → rotenone + antimycin A(미토콘드리아 외 산소 소비만 남음). 포도당 1분자를 완전히 산화하면 약 30–32 ATP입니다.'],
+  order:[{t:'NADH',f:'기질'},{t:'CoQH₂',f:'유비퀴놀, 내막'},{t:'cytochrome c',f:'환원형, 막간'},{t:'O₂ → H₂O',f:'최종 전자 수용체'},{t:'양성자 기울기',f:'Δp = ΔΨm + ΔpH'},{t:'ATP',f:'ATP synthase'}],
+  via:['Complex I (H⁺ 4)','Complex III (H⁺ 4)','Complex IV (H⁺ 2)','H⁺ 합계 10개 / NADH','Complex V'],
+  quiz:[
+    {q:'양성자를 퍼내지 않는 복합체는?', opts:['Complex II','Complex I','Complex III','Complex IV'], ex:'SDH(complex II)는 숙신산의 전자를 CoQ로 넘기기만 합니다. 그래서 FADH₂의 P/O 비율(약 1.5)이 NADH(약 2.5)보다 낮습니다.'},
+    {q:'억제제와 표적의 짝이 틀린 것은?', opts:['rotenone – complex III','antimycin A – complex III','시안화물 – complex IV','oligomycin – complex V'], ex:'rotenone은 complex I의 CoQ 결합 자리를 막습니다.'},
+    {q:'NADH 1개의 전자가 산소까지 갈 때 퍼내는 양성자 수는?', opts:['10개','6개','4개','12개'], ex:'complex I 4개 + III 4개 + IV 2개. 숙신산은 complex I을 건너뛰어 6개입니다.'},
+    {q:'Seahorse 분석에서 FCCP를 넣으면 나타나는 것은?', opts:['최대 호흡 (막전위가 무너져 산소 소비가 최대로 오름)','ATP 합성에 쓰이던 호흡만 남음','미토콘드리아 호흡이 완전히 멈춤','해당과정이 멈춤'], ex:'FCCP는 양성자를 막 너머로 실어 나르는 탈공역제입니다. 최대 호흡과 기저 호흡의 차이가 예비 호흡능(spare capacity)입니다.'},
+    {q:'세포질 NADH를 글리세롤인산 셔틀로 넘기면 ATP 수율이 낮아지는 이유는?', opts:['전자가 complex I을 건너뛰고 CoQ로 바로 들어가기 때문','NADH가 NADPH로 바뀌기 때문','양성자가 새기 때문','ATP 합성효소를 거치지 않기 때문'], ex:'GPD2가 FAD를 거쳐 CoQ에 전자를 넘기므로 complex I의 양성자 4개만큼 손해입니다.'},
+    {q:'UCP1의 기능은?', opts:['양성자를 ATP 합성 없이 기질로 돌려보내 열을 낸다','ATP를 수송한다','전자를 산소에 직접 전달한다','NADH를 수송한다'], ex:'갈색지방의 비떨림 열생산. 탈공역제(FCCP, DNP)도 같은 원리로 산소 소비는 늘리고 ATP는 줄입니다.'},
+    {q:'포도당 1분자를 완전히 산화할 때 얻는 ATP는 대략?', opts:['30–32개','2개','15개','38개만 정확'], ex:'예전 교과서의 36–38은 P/O 비율을 3과 2로 계산한 값이고, 현재는 2.5와 1.5로 계산해 30–32를 씁니다(셔틀 종류에 따라 다름).'},
+    {q:'complex IV를 억제하는 물질은?', opts:['시안화물','rotenone','oligomycin','malonate'], ex:'시안화물·CO·아자이드는 헴 a₃–CuB 자리에 붙어 산소 환원을 막습니다.'}
+  ]
+},
+{
+  id:'fao', grp:'energy', code:'FAO', title:'지방산 β-산화', short:'β-산화', color:'--m-fao',
+  intro:'지방산을 CoA로 활성화하고 카르니틴 셔틀로 미토콘드리아에 들인 뒤, 네 단계 반응을 반복하며 2탄소씩 acetyl-CoA로 떼어냅니다. 한 바퀴마다 FADH₂ 1개와 NADH 1개가 나옵니다.',
+  keys:['활성화(ACSL) → CPT1(율속, malonyl-CoA가 억제) → CACT → CPT2 → 기질',
+        '한 바퀴: 탈수소(ACAD, FAD) → 수화 → 탈수소(HADH, NAD⁺) → 티올 분해(acetyl-CoA 방출)',
+        '팔미트산(C16) → 7바퀴 → acetyl-CoA 8 + FADH₂ 7 + NADH 7 → 약 106 ATP'],
+  steps:[
+    {e:'ACSL', ef:'long-chain acyl-CoA synthetase', ec:'6.2.1.3', s:'지방산 + CoA + ATP', p:'acyl-CoA + AMP + PPi', co:['ATP (고에너지 결합 2개)'], loc:'미토콘드리아 외막 · 소포체', n:'PPi가 분해되어 반응을 끌어당기므로 ATP 2개 등가가 듭니다.'},
+    {e:'CPT1A', ef:'carnitine palmitoyltransferase 1A', ec:'2.3.1.21', s:'acyl-CoA + 카르니틴', p:'acylcarnitine + CoA', co:[], loc:'미토콘드리아 외막', n:'율속 단계. malonyl-CoA가 억제합니다. 억제제 etomoxir는 고농도에서 complex I 억제 같은 비특이 효과가 있어 해석에 주의해야 합니다(Yao 2018, PLOS Biology).'},
+    {e:'CACT', ef:'carnitine–acylcarnitine translocase (SLC25A20)', ec:'수송체', s:'acylcarnitine (막간)', p:'acylcarnitine (기질), 카르니틴은 반대로', co:[], loc:'미토콘드리아 내막', n:'장쇄 acyl-CoA는 내막을 못 건너므로 카르니틴에 실어 옮깁니다.'},
+    {e:'CPT2', ef:'carnitine palmitoyltransferase 2', ec:'2.3.1.21', s:'acylcarnitine + CoA', p:'acyl-CoA + 카르니틴', co:[], loc:'미토콘드리아 내막 (기질 쪽)', n:'기질 안에서 다시 acyl-CoA를 만듭니다.'},
+    {e:'ACADM', ef:'acyl-CoA dehydrogenase (사슬 길이별 VLCAD · LCAD · MCAD · SCAD)', ec:'1.3.8.7', s:'acyl-CoA + FAD', p:'trans-Δ²-enoyl-CoA + FADH₂', co:['FAD → ETF → ETFDH → CoQ'], loc:'미토콘드리아 기질', n:'MCAD(ACADM) 결핍은 가장 흔한 β-산화 질환으로, 공복 시 저케톤성 저혈당을 일으킵니다.'},
+    {e:'ECHS1', ef:'enoyl-CoA hydratase (장쇄는 trifunctional protein HADHA)', ec:'4.2.1.17', s:'trans-Δ²-enoyl-CoA + H₂O', p:'L-3-hydroxyacyl-CoA', co:[], loc:'미토콘드리아 기질', n:'이중결합에 물을 붙입니다.'},
+    {e:'HADH', ef:'3-hydroxyacyl-CoA dehydrogenase', ec:'1.1.1.35', s:'L-3-hydroxyacyl-CoA + NAD⁺', p:'3-ketoacyl-CoA + NADH', co:['NAD⁺ → NADH'], loc:'미토콘드리아 기질', n:'두 번째 산화. 장쇄는 trifunctional protein(HADHA)이 맡습니다.'},
+    {e:'ACAA2', ef:'3-ketoacyl-CoA thiolase (장쇄는 HADHB)', ec:'2.3.1.16', s:'3-ketoacyl-CoA + CoA', p:'acyl-CoA (C n−2) + acetyl-CoA', co:[], loc:'미토콘드리아 기질', n:'2탄소를 떼어내고 짧아진 acyl-CoA는 다음 바퀴로 갑니다.'}
+  ],
+  side:[
+    {e:'PCC', ef:'propionyl-CoA carboxylase', ec:'6.4.1.3', s:'프로피오닐-CoA + HCO₃⁻ + ATP', p:'D-메틸말로닐-CoA', co:['비오틴','ATP'], loc:'미토콘드리아 기질', n:'홀수 사슬 지방산의 마지막 3탄소와 발린·이소류신·메티오닌·트레오닌 분해가 모이는 곳입니다.'},
+    {e:'MMUT', ef:'methylmalonyl-CoA mutase', ec:'5.4.99.2', s:'L-메틸말로닐-CoA', p:'숙시닐-CoA', co:['아데노실코발라민 (비타민 B12)'], loc:'미토콘드리아 기질', n:'B12가 부족하면 메틸말론산(MMA)이 쌓입니다. 노화로 늘어난 혈중 MMA가 암 진행을 돕는다는 보고(Gomes 2020, Nature).'},
+    {e:'ECI1', ef:'enoyl-CoA isomerase 1', ec:'5.3.3.8', s:'cis-Δ³-enoyl-CoA', p:'trans-Δ²-enoyl-CoA', co:[], loc:'미토콘드리아 기질', n:'불포화지방산의 이중결합 위치를 β-산화가 처리할 수 있는 자리로 옮깁니다. 이중결합이 둘이면 DECR1(NADPH 소모)도 필요합니다.'},
+    {e:'ACOX1', ef:'peroxisomal acyl-CoA oxidase 1', ec:'1.3.3.6', s:'초장쇄 acyl-CoA (C22 이상) + O₂', p:'trans-Δ²-enoyl-CoA + H₂O₂', co:['FAD'], loc:'퍼옥시좀', n:'초장쇄 지방산은 퍼옥시좀에서 먼저 짧아집니다. 전자가 H₂O₂로 가서 ATP를 만들지 않습니다. ABCD1 결손 = X 연관 부신백질이영양증.'}
+  ],
+  notes:['팔미트산(C16) 계산: 7바퀴 → acetyl-CoA 8개(× 10 ATP) + FADH₂ 7개(× 1.5) + NADH 7개(× 2.5) = 108, 활성화 비용 2 ATP를 빼면 약 106 ATP.'],
+  order:[{t:'지방산',f:'세포질'},{t:'acyl-CoA',f:'세포질'},{t:'acylcarnitine',f:'외막 → 내막'},{t:'acyl-CoA',f:'기질'},{t:'trans-Δ²-enoyl-CoA',f:'2,3 이중결합'},{t:'L-3-hydroxyacyl-CoA',f:'수화 산물'},{t:'3-ketoacyl-CoA',f:'β-케토'},{t:'acetyl-CoA + acyl-CoA (n−2)',f:'다음 바퀴로'}],
+  via:['ACSL (ATP 2개 등가)','CPT1A (율속)','CACT · CPT2','ACAD (FADH₂)','enoyl-CoA hydratase','HADH (NADH)','thiolase (+ CoA)'],
+  quiz:[
+    {q:'β-산화의 율속 단계와 그 억제자는?', opts:['CPT1, malonyl-CoA','ACAD, FADH₂','thiolase, acetyl-CoA','ACSL, AMP'], ex:'지방산 합성 중간산물 malonyl-CoA가 CPT1을 막아, 합성과 분해가 동시에 돌지 않게 합니다.'},
+    {q:'β-산화 한 바퀴에서 생기는 것은?', opts:['FADH₂ 1 + NADH 1 + acetyl-CoA 1','NADH 2 + acetyl-CoA 1','FADH₂ 2 + acetyl-CoA 2','NADPH 1 + acetyl-CoA 1'], ex:'첫 탈수소(ACAD)는 FAD, 두 번째(HADH)는 NAD⁺를 씁니다.'},
+    {q:'팔미트산 1분자를 완전히 산화할 때 얻는 순 ATP는 대략?', opts:['106개','129개','36개','16개'], ex:'예전 P/O(3, 2)로 계산하면 129이고, 현재 값(2.5, 1.5)으로는 106입니다.'},
+    {q:'홀수 사슬 지방산의 마지막 3탄소 조각이 TCA 회로로 들어가는 경로에 필요한 비타민 조합은?', opts:['비오틴 (PCC)과 B12 (MMUT)','티아민과 리보플래빈','엽산과 B6','니아신과 판토텐산'], ex:'프로피오닐-CoA → (PCC, 비오틴) → 메틸말로닐-CoA → (MMUT, B12) → 숙시닐-CoA. 그래서 홀수 사슬 지방산은 포도당 재료가 될 수 있습니다.'},
+    {q:'MCAD 결핍 아이가 공복 때 보이는 전형적 소견은?', opts:['저케톤성 저혈당','고케톤성 고혈당','고암모니아혈증만','젖산 산증만'], ex:'지방산을 태우지 못해 케톤체가 안 생기고, 포도당을 아끼지 못해 혈당이 떨어집니다.'},
+    {q:'CPT1 억제제 etomoxir 실험을 해석할 때 주의할 점은?', opts:['고농도에서 complex I 억제 같은 비특이 효과가 있다','CPT2만 억제한다','세포에 들어가지 못한다','β-산화를 오히려 늘린다'], ex:'β-산화를 거의 다 막는 농도보다 높게 쓰면 지방산 산화와 무관한 효과가 생깁니다(Yao 2018, PLOS Biology). 유전적 결손으로 함께 확인하는 것이 좋습니다.'},
+    {q:'퍼옥시좀 β-산화의 특징은?', opts:['첫 단계가 H₂O₂를 만들고 초장쇄 지방산을 먼저 짧게 만든다','카르니틴이 필요 없고 ATP를 더 많이 만든다','홀수 사슬만 처리한다','세포질에서 일어난다'], ex:'ACOX1의 전자는 산소로 바로 가서 H₂O₂가 되고, 카탈레이스가 분해합니다.'},
+    {q:'장쇄 지방산이 카르니틴 셔틀을 거쳐야 하는 이유는?', opts:['장쇄 acyl-CoA가 미토콘드리아 내막을 통과하지 못해서','카르니틴이 지방산을 산화해서','CoA가 미토콘드리아에 없어서','ATP를 만들기 위해서'], ex:'CoA 풀은 세포질과 기질에 따로 있어, acyl기만 카르니틴에 실어 옮깁니다. 중쇄 지방산은 셔틀 없이 들어갈 수 있습니다.'}
+  ]
+},
+{
+  id:'ketone', grp:'energy', code:'KB', title:'케톤체 생성 · 이용', short:'케톤체', color:'--m-ketone',
+  intro:'공복과 저탄수화물 상태에서 간 미토콘드리아는 β-산화로 넘친 acetyl-CoA를 케톤체로 바꿔 혈액에 내보내고, 뇌·심장·근육은 이를 다시 acetyl-CoA로 바꿔 씁니다.',
+  keys:['간: acetyl-CoA → (ACAT1) → 아세토아세틸-CoA → (HMGCS2, 율속) → HMG-CoA → (HMGCL) → 아세토아세트산 ⇌ (BDH1) β-하이드록시부티르산',
+        '말초: β-HB → 아세토아세트산 → (OXCT1, 숙시닐-CoA) → 아세토아세틸-CoA → 2 acetyl-CoA',
+        '간에는 OXCT1이 없어 자신이 만든 케톤체를 쓰지 못함'],
+  steps:[
+    {e:'ACAT1', ef:'acetyl-CoA acetyltransferase 1 (미토콘드리아 thiolase)', ec:'2.3.1.9', s:'2 acetyl-CoA', p:'아세토아세틸-CoA + CoA', co:[], loc:'간 미토콘드리아', n:'β-산화 마지막 단계의 역반응입니다.'},
+    {e:'HMGCS2', ef:'HMG-CoA synthase 2 (미토콘드리아)', ec:'2.3.3.10', s:'아세토아세틸-CoA + acetyl-CoA', p:'HMG-CoA', co:[], loc:'간 미토콘드리아', n:'케톤 생성의 율속 단계. PPARα가 전사를 올리고 인슐린이 억제합니다. 세포질의 HMGCS1은 같은 반응으로 콜레스테롤 쪽으로 갑니다.'},
+    {e:'HMGCL', ef:'HMG-CoA lyase', ec:'4.1.3.4', s:'HMG-CoA', p:'아세토아세트산 + acetyl-CoA', co:[], loc:'간 미토콘드리아', n:'첫 번째 케톤체. 류신 분해의 마지막 단계도 이 효소입니다.'},
+    {e:'BDH1', ef:'3-hydroxybutyrate dehydrogenase 1', ec:'1.1.1.30', s:'아세토아세트산 + NADH', p:'β-하이드록시부티르산 (β-HB) + NAD⁺', co:['NADH ⇌ NAD⁺'], loc:'간 미토콘드리아', n:'혈중 주 케톤체가 됩니다. 아세토아세트산 일부는 저절로 탈카복실화되어 아세톤이 됩니다.'},
+    {e:'BDH1', dom:'말초 조직', ef:'3-hydroxybutyrate dehydrogenase 1 (역반응)', ec:'1.1.1.30', s:'β-HB + NAD⁺', p:'아세토아세트산 + NADH', co:['NAD⁺ → NADH'], loc:'뇌 · 심장 · 근육 미토콘드리아', n:'MCT1로 들어온 β-HB를 다시 아세토아세트산으로 산화합니다.'},
+    {e:'OXCT1', ef:'succinyl-CoA:3-ketoacid CoA transferase (SCOT)', ec:'2.8.3.5', s:'아세토아세트산 + 숙시닐-CoA', p:'아세토아세틸-CoA + 숙신산', co:[], loc:'말초 조직 미토콘드리아', n:'케톤체 이용의 핵심 효소. 간에는 거의 없어서 간은 케톤체를 내보내기만 합니다.'},
+    {e:'ACAT1', dom:'말초 조직', ef:'acetyl-CoA acetyltransferase 1 (thiolase 방향)', ec:'2.3.1.9', s:'아세토아세틸-CoA + CoA', p:'2 acetyl-CoA', co:[], loc:'말초 조직 미토콘드리아', n:'만들어진 acetyl-CoA는 TCA 회로로 들어갑니다.'}
+  ],
+  side:[
+    {e:'MCT1', ef:'monocarboxylate transporter 1 (SLC16A1)', ec:'수송체', s:'혈중 β-HB · 아세토아세트산', p:'세포 안 케톤체', co:[], loc:'원형질막', n:'젖산·피루브산과 함께 쓰는 운반체입니다.'}
+  ],
+  notes:['β-HB는 class I HDAC 억제제이자 히스톤 β-hydroxybutyrylation의 재료로, 대사와 후성유전을 잇는 예입니다(Shimazu 2013, Science; Xie 2016, Molecular Cell). 케톤 식이의 항암 효과는 종양 유형마다 결과가 엇갈립니다.'],
+  order:[{t:'acetyl-CoA',f:'간'},{t:'아세토아세틸-CoA',f:'간'},{t:'HMG-CoA',f:'3-hydroxy-3-methylglutaryl-CoA'},{t:'아세토아세트산',f:'간'},{t:'β-하이드록시부티르산',f:'혈중으로'},{t:'아세토아세트산',f:'말초 조직'},{t:'아세토아세틸-CoA',f:'말초 조직'},{t:'acetyl-CoA',f:'말초 → TCA'}],
+  via:['ACAT1','HMGCS2 (율속)','HMGCL (− acetyl-CoA)','BDH1 (NADH)','BDH1 (NAD⁺, 말초)','OXCT1 (+ 숙시닐-CoA)','ACAT1 (+ CoA)'],
+  quiz:[
+    {q:'케톤 생성의 율속 효소는?', opts:['HMGCS2','HMGCR','BDH1','OXCT1'], ex:'미토콘드리아 HMGCS2. 세포질의 HMGCS1–HMGCR은 콜레스테롤 쪽입니다.'},
+    {q:'간이 자신이 만든 케톤체를 쓰지 못하는 이유는?', opts:['OXCT1(SCOT)이 거의 없어서','BDH1이 없어서','케톤체 수송체가 없어서','간에는 미토콘드리아가 적어서'], ex:'케톤체를 다시 아세토아세틸-CoA로 활성화하는 OXCT1이 간에 없습니다.'},
+    {q:'공복 때 혈중에 가장 많은 케톤체는?', opts:['β-하이드록시부티르산','아세토아세트산','아세톤','HMG-CoA'], ex:'간 미토콘드리아의 높은 NADH/NAD⁺ 비율이 BDH1 반응을 β-HB 쪽으로 밀어줍니다.'},
+    {q:'공복 때 간에서 케톤 생성이 늘어나는 조건으로 옳지 않은 것은?', opts:['인슐린이 높다','β-산화로 acetyl-CoA가 넘친다','옥살아세트산이 포도당신생합성으로 빠져 TCA 회로가 느려진다','글루카곤이 높다'], ex:'인슐린은 지방 분해와 케톤 생성을 억제합니다. 인슐린이 부족한 1형 당뇨에서 케톤산증이 생기는 이유입니다.'},
+    {q:'β-하이드록시부티르산의 후성유전 작용으로 보고된 것은?', opts:['class I HDAC 억제와 히스톤 β-hydroxybutyrylation','DNA 메틸전이효소 활성화','히스톤 탈메틸화효소 억제만','SAM 생성'], ex:'Shimazu 2013(Science)가 HDAC 억제를, Xie 2016(Molecular Cell)이 새 히스톤 아실화를 보고했습니다.'},
+    {q:'아세톤은 어떻게 생기는가?', opts:['아세토아세트산이 저절로 탈카복실화되어','β-HB가 산화되어','HMG-CoA가 분해되어','acetyl-CoA 두 개가 합쳐져'], ex:'효소 없이 일어나며, 케톤산증 환자의 숨에서 나는 과일 냄새의 원인입니다.'},
+    {q:'HMG-CoA의 두 운명을 바르게 짝지은 것은?', opts:['세포질 HMGCR → 콜레스테롤 / 미토콘드리아 HMGCL → 케톤체','세포질 HMGCL → 케톤체 / 미토콘드리아 HMGCR → 콜레스테롤','둘 다 미토콘드리아','둘 다 콜레스테롤'], ex:'같은 HMG-CoA라도 구획이 다릅니다. HMGCS1·HMGCR은 세포질과 소포체, HMGCS2·HMGCL은 미토콘드리아입니다.'}
+  ]
+},
+{
+  id:'gng', grp:'carb', code:'GNG', title:'포도당신생합성', short:'포도당신생합성', color:'--m-gng',
+  intro:'간과 신장이 젖산, 알라닌, 글리세롤 등에서 포도당을 새로 만들어 혈당을 지킵니다. 해당과정의 비가역 세 단계를 네 개의 다른 효소로 우회하고, 나머지는 해당과정 효소를 거꾸로 씁니다.',
+  keys:['우회 효소 4개: PC(미토콘드리아) · PCK1 · FBP1 · G6PC1(소포체)',
+        '피루브산 2개 → 포도당 1개에 ATP 4 + GTP 2 + NADH 2',
+        '해당과정과의 전환 스위치: F2,6BP (PFK1 켜고 FBP1 끔). 글루카곤 → PKA → F2,6BP ↓ → 신생합성 ↑'],
+  steps:[
+    {e:'PC', ef:'pyruvate carboxylase', ec:'6.4.1.1', s:'피루브산 + HCO₃⁻ + ATP', p:'옥살아세트산 + ADP + Pi', co:['비오틴','ATP'], loc:'미토콘드리아 기질', n:'acetyl-CoA가 알로스테릭 활성화합니다. 공복 때 β-산화가 만든 acetyl-CoA가 신생합성을 켜는 신호가 됩니다.'},
+    {e:'MDH2 · MDH1', ef:'malate dehydrogenase 2(미토콘드리아) · 1(세포질)', ec:'1.1.1.37', s:'옥살아세트산 (미토콘드리아)', p:'옥살아세트산 (세포질), 말산 형태로 운반', co:['NADH를 세포질로 운반'], loc:'미토콘드리아 → 세포질', n:'옥살아세트산은 내막을 못 건너 말산으로 바뀌어 나옵니다. 이때 GAPDH 역반응에 필요한 NADH도 세포질로 옮겨집니다.'},
+    {e:'PCK1', ef:'phosphoenolpyruvate carboxykinase 1 (세포질 PEPCK; 미토콘드리아형은 PCK2)', ec:'4.1.1.32', s:'옥살아세트산 + GTP', p:'PEP + CO₂ + GDP', co:['GTP'], loc:'세포질', n:'주로 전사로 조절됩니다. 글루카곤(cAMP–CREB)과 코르티솔이 올리고 인슐린이 내립니다.'},
+    {e:'해당과정 가역 효소', ef:'ENO1 · PGAM1 · PGK1 · GAPDH · TPI1 · ALDOA를 거꾸로', ec:'여러 효소', s:'PEP', p:'과당-1,6-이인산', co:['ATP (PGK1)','NADH (GAPDH)'], loc:'세포질', noquiz:true, n:'평형 근처의 반응이라 기질 농도에 따라 방향이 바뀝니다. 포도당 1개당 ATP 2개와 NADH 2개가 여기서 듭니다.'},
+    {e:'FBP1', ef:'fructose-1,6-bisphosphatase 1', ec:'3.1.3.11', s:'과당-1,6-이인산 + H₂O', p:'과당-6-인산 + Pi', co:[], loc:'세포질', n:'AMP와 F2,6BP가 억제합니다(PFK1과 정반대). 투명세포 신장암에서 FBP1이 소실되어 해당과정과 HIF 활성이 올라갑니다(Li 2014, Nature).'},
+    {e:'GPI', ef:'glucose-6-phosphate isomerase', ec:'5.3.1.9', s:'과당-6-인산', p:'포도당-6-인산', co:[], loc:'세포질', n:'해당과정 두 번째 반응의 역방향입니다.'},
+    {e:'G6PC1', ef:'glucose-6-phosphatase catalytic subunit 1 (G6P 수송체 SLC37A4와 짝)', ec:'3.1.3.9', s:'포도당-6-인산 + H₂O', p:'포도당 + Pi', co:[], loc:'소포체 내강', n:'간과 신장에만 있어서 이 조직만 혈당을 내보낼 수 있습니다. 결손은 당원병 1a형(von Gierke병). 간의 구역별 G6pc1 결손은 다른 구역이 보상한다는 preprint가 있습니다(Liang 2026, bioRxiv, DeBerardinis 랩).'}
+  ],
+  side:[
+    {e:'LDHA', ef:'lactate dehydrogenase', ec:'1.1.1.27', s:'젖산 + NAD⁺', p:'피루브산 + NADH', co:['NAD⁺ → NADH'], loc:'간 세포질', n:'Cori 회로: 근육과 종양의 젖산이 간에서 포도당이 되어 돌아갑니다.'},
+    {e:'GPT2', ef:'alanine aminotransferase (ALT)', ec:'2.6.1.2', s:'알라닌 + α-KG', p:'피루브산 + 글루탐산', co:['PLP'], loc:'간', n:'Cahill(포도당–알라닌) 회로: 근육 단백질 분해의 질소와 탄소를 간으로 보냅니다.'},
+    {e:'GK', ef:'glycerol kinase', ec:'2.7.1.30', s:'글리세롤 + ATP', p:'글리세롤-3-인산', co:['ATP'], loc:'간', n:'지방 분해로 나온 글리세롤은 GPD1로 DHAP가 되어 신생합성에 들어갑니다. 지방산 쪽 탄소는 포도당이 될 수 없지만 글리세롤은 됩니다.'},
+    {e:'PFKFB1', ef:'6-phosphofructo-2-kinase/fructose-2,6-bisphosphatase 1 (간형, 이기능 효소)', ec:'2.7.1.105 · 3.1.3.46', s:'과당-6-인산 ⇌ 과당-2,6-이인산', p:'F2,6BP 농도 조절', co:[], loc:'간 세포질', n:'글루카곤 → PKA가 PFKFB1을 인산화하면 키나제는 꺼지고 포스파타제가 켜져 F2,6BP가 떨어집니다. 그러면 PFK1은 느려지고 FBP1은 풀려 신생합성 쪽으로 기웁니다.'}
+  ],
+  notes:['기질 순위: 젖산(Cori 회로) · 알라닌을 비롯한 포도당 생성 아미노산 · 글리세롤 · 프로피오닐-CoA(홀수 사슬 지방산). 짝수 사슬 지방산의 acetyl-CoA는 포도당이 될 수 없습니다(TCA 회로 탭 참고).'],
+  order:[{t:'피루브산',f:'미토콘드리아로'},{t:'옥살아세트산',f:'미토콘드리아'},{t:'말산',f:'셔틀로 운반'},{t:'옥살아세트산',f:'세포질'},{t:'PEP',f:'phosphoenolpyruvate'},{t:'F1,6BP',f:'fructose-1,6-bisphosphate'},{t:'F6P',f:'fructose-6-phosphate'},{t:'G6P',f:'glucose-6-phosphate'},{t:'포도당',f:'혈중으로'}],
+  via:['PC (+ HCO₃⁻, ATP)','MDH2 (말산으로)','MDH1','PCK1 (GTP, − CO₂)','해당 가역 단계 (ATP, NADH)','FBP1 (− Pi)','GPI','G6PC1 (소포체)'],
+  quiz:[
+    {q:'해당과정의 비가역 단계를 우회하는 네 효소는?', opts:['PC, PCK1, FBP1, G6PC1','HK, PFK1, PK, LDH','PC, PDH, CS, MDH2','GPI, ALDOA, TPI1, GAPDH'], ex:'PK는 PC + PCK1 두 단계로, PFK1은 FBP1로, HK는 G6PC1로 우회합니다.'},
+    {q:'PC를 알로스테릭 활성화하는 대사물은?', opts:['acetyl-CoA','AMP','F2,6BP','인슐린'], ex:'공복 때 β-산화로 acetyl-CoA가 쌓이면 PC가 켜지고 PDH는 꺼집니다. 피루브산을 태우지 말고 포도당으로 만들라는 신호입니다.'},
+    {q:'FBP1을 억제하는 대사물은?', opts:['AMP와 F2,6BP','ATP와 citrate','acetyl-CoA','글루카곤'], ex:'PFK1을 켜는 신호와 같은 신호가 FBP1을 끕니다. 그래서 두 반응이 동시에 돌며 ATP만 낭비하는 일이 줄어듭니다.'},
+    {q:'혈중으로 포도당을 내보낼 수 있는 조직은?', opts:['간과 신장','근육과 뇌','지방과 근육','적혈구'], ex:'G6PC1이 있어야 포도당-6-인산의 인산을 떼어 내보낼 수 있습니다. 근육 글리코겐은 근육 안에서만 씁니다.'},
+    {q:'피루브산 2분자로 포도당 1분자를 만드는 데 드는 에너지는?', opts:['ATP 4 + GTP 2 + NADH 2','ATP 2','ATP 6 + NADPH 2','GTP 4'], ex:'PC(ATP 1 × 2), PCK1(GTP 1 × 2), PGK1 역반응(ATP 1 × 2), GAPDH 역반응(NADH 1 × 2). 해당과정이 내는 ATP 2개보다 훨씬 비쌉니다.'},
+    {q:'글루카곤이 간에서 F2,6BP를 낮추는 방식은?', opts:['PKA가 PFKFB1을 인산화해 포스파타제 활성을 켠다','PFK1을 분해한다','FBP1 전사를 끈다','G6PC1을 억제한다'], ex:'F2,6BP가 줄면 PFK1은 느려지고 FBP1 억제가 풀려 흐름이 신생합성 쪽으로 기웁니다.'},
+    {q:'포도당신생합성의 재료가 될 수 없는 것은?', opts:['팔미트산의 acetyl-CoA','젖산','알라닌','글리세롤'], ex:'짝수 사슬 지방산은 acetyl-CoA만 내고, acetyl-CoA로는 옥살아세트산이 순증가하지 않습니다.'},
+    {q:'투명세포 신장암에서 FBP1 소실이 종양에 유리한 이유로 보고된 것은?', opts:['해당과정 흐름이 늘고 FBP1이 하던 HIF 억제가 풀린다','포도당신생합성이 늘어난다','지방산 산화가 늘어난다','요산이 줄어든다'], ex:'FBP1은 효소 활성 외에 핵에서 HIF 활성을 억제하는 역할도 했습니다(Li 2014, Nature).'}
+  ]
+},
+{
+  id:'glycogen', grp:'carb', code:'GLYG', title:'글리코겐 합성 · 분해', short:'글리코겐', color:'--m-glycogen',
+  intro:'포도당을 UDP-포도당으로 활성화해 α1→4 사슬로 잇고 α1→6 가지를 쳐서 저장합니다. 분해는 인산분해(phosphorolysis)로 포도당-1-인산을 떼어냅니다. 인슐린과 글루카곤·에피네프린이 두 방향을 반대로 스위칭합니다.',
+  keys:['합성: G6P → (PGM1) → G1P → (UGP2, UTP) → UDP-포도당 → (GYS, 율속) → α1→4 사슬 → (GBE1) α1→6 가지',
+        '분해: (PYG, PLP, 율속) → G1P → (PGM1) → G6P · 가지는 AGL이 처리',
+        '스위치: 인슐린 → AKT → GSK3 억제 → GYS 켜짐 / 글루카곤·에피네프린 → PKA → PHK → PYG 켜짐, GYS 꺼짐'],
+  steps:[
+    {e:'PGM1', ef:'phosphoglucomutase 1', ec:'5.4.2.2', s:'포도당-6-인산', p:'포도당-1-인산 (G1P)', co:['포도당-1,6-이인산 (중간체)'], loc:'세포질', n:'가역 반응. 합성과 분해 양쪽에서 쓰입니다.'},
+    {e:'UGP2', ef:'UDP-glucose pyrophosphorylase 2', ec:'2.7.7.9', s:'포도당-1-인산 + UTP', p:'UDP-포도당 + PPi', co:['UTP'], loc:'세포질', n:'PPi가 바로 분해되어 반응을 앞으로 끕니다. UDP-포도당은 당단백질·글루쿠론산 합성에도 쓰입니다.'},
+    {e:'GYG1', ef:'glycogenin 1', ec:'2.4.1.186', s:'UDP-포도당 + 글리코게닌', p:'포도당 사슬(약 8개)이 붙은 글리코게닌', co:[], loc:'세포질', n:'자기 티로신 잔기에 포도당을 붙여 합성의 출발점(프라이머)을 만듭니다.'},
+    {e:'GYS1/2', ef:'glycogen synthase (1: 근육, 2: 간)', ec:'2.4.1.11', s:'UDP-포도당 + 글리코겐 (n)', p:'글리코겐 (n+1, α1→4) + UDP', co:[], loc:'세포질', n:'율속 단계. GSK3·PKA·AMPK가 인산화해 끄고, PP1이 탈인산화해 켭니다. 포도당-6-인산은 인산화된 형태도 알로스테릭 활성화합니다.'},
+    {e:'GBE1', ef:'glycogen branching enzyme', ec:'2.4.1.18', s:'α1→4 사슬 끝의 약 7잔기 조각', p:'α1→6 가지', co:[], loc:'세포질', n:'가지가 많을수록 끝이 많아져 합성과 분해가 빨라지고 용해도가 올라갑니다.'}
+  ],
+  side:[
+    {e:'PYGL/PYGM', ef:'glycogen phosphorylase (L: 간, M: 근육)', ec:'2.4.1.1', s:'글리코겐 (n) + Pi', p:'포도당-1-인산 + 글리코겐 (n−1)', co:['PLP'], loc:'세포질', n:'분해의 율속 단계. 가수분해가 아니라 인산분해라 ATP 없이 인산화된 포도당을 얻습니다. 가지점 4잔기 앞에서 멈춥니다.'},
+    {e:'AGL', ef:'glycogen debranching enzyme (transferase + α1→6 glucosidase)', ec:'2.4.1.25 · 3.2.1.33', s:'가지점 4잔기 조각', p:'3잔기는 옆 사슬로 이동, 남은 1잔기는 유리 포도당', co:[], loc:'세포질', n:'분해 산물의 약 10%가 유리 포도당으로 나오는 이유입니다.'},
+    {e:'PHK', ef:'phosphorylase kinase', ec:'2.7.11.19', s:'phosphorylase b + ATP', p:'phosphorylase a (활성형)', co:['Ca²⁺ (calmodulin 소단위)'], loc:'세포질', n:'PKA와 Ca²⁺가 켭니다. 근육에서는 수축의 Ca²⁺가 바로 글리코겐 분해를 켭니다.'},
+    {e:'GSK3B', ef:'glycogen synthase kinase 3β', ec:'2.7.11.26', s:'glycogen synthase + ATP', p:'인산화 glycogen synthase (불활성)', co:['ATP'], loc:'세포질', n:'인슐린 → AKT가 GSK3를 인산화해 끄면 glycogen synthase가 켜집니다.'},
+    {e:'GAA', ef:'acid α-glucosidase', ec:'3.2.1.20', s:'리소좀 글리코겐', p:'포도당', co:[], loc:'리소좀', n:'결손은 Pompe병(당원병 2형). 글리코겐이 리소좀에 쌓입니다.'}
+  ],
+  notes:['당원병 짝 맞추기: 1a형 von Gierke – G6PC1, 2형 Pompe – GAA, 3형 Cori – AGL, 5형 McArdle – PYGM, 6형 Hers – PYGL. 암세포도 저산소에서 글리코겐을 쌓았다가 쓰며, GYS1·PYGL이 HIF1α 표적입니다(Favaro 2012, Cell Metabolism).'],
+  order:[{t:'G6P',f:'glucose-6-phosphate'},{t:'G1P',f:'glucose-1-phosphate'},{t:'UDP-포도당',f:'활성화된 포도당'},{t:'글리코게닌 프라이머',f:'포도당 약 8개'},{t:'α1→4 사슬',f:'선형 연장'},{t:'가지 친 글리코겐',f:'α1→6 가지'}],
+  via:['PGM1','UGP2 (+ UTP, − PPi)','GYG1','GYS1/2 (율속)','GBE1'],
+  quiz:[
+    {q:'글리코겐 합성의 율속 효소와 대표적 억제 키나제는?', opts:['glycogen synthase, GSK3','glycogen phosphorylase, PHK','UGP2, PKA','GBE1, AMPK'], ex:'GSK3·PKA·AMPK 인산화가 glycogen synthase를 끄고, 인슐린은 AKT로 GSK3를 꺼서 합성을 켭니다.'},
+    {q:'글리코겐 합성에 쓰이는 활성화된 포도당은?', opts:['UDP-포도당','ADP-포도당','포도당-6-인산','CDP-포도당'], ex:'동물은 UDP-포도당, 식물 녹말은 ADP-포도당을 씁니다.'},
+    {q:'glycogen phosphorylase의 보조인자는?', opts:['PLP','TPP','비오틴','FAD'], ex:'PLP의 인산기가 일반 산·염기 촉매로 일합니다. 근육 PLP의 상당 부분이 이 효소에 붙어 있습니다.'},
+    {q:'glycogen phosphorylase가 가수분해 대신 인산분해를 쓰는 이점은?', opts:['ATP 없이 포도당-1-인산(인산화된 포도당)을 얻는다','유리 포도당을 더 많이 얻는다','UTP를 만든다','가지를 직접 자른다'], ex:'포도당-1-인산은 PGM1로 바로 G6P가 되어 HK 단계를 건너뜁니다.'},
+    {q:'근육 글리코겐이 혈당 유지에 직접 기여하지 못하는 이유는?', opts:['근육에 G6PC1이 없어 포도당을 내보내지 못한다','근육에 phosphorylase가 없다','근육 글리코겐에는 가지가 없다','근육은 인슐린 수용체가 없다'], ex:'근육은 분해한 포도당을 해당과정에 바로 씁니다.'},
+    {q:'근육이 수축할 때 글리코겐 분해를 빠르게 켜는 신호는?', opts:['Ca²⁺(PHK 활성화)와 AMP(phosphorylase 알로스테릭 활성화)','인슐린','글루카곤','포도당-6-인산'], ex:'근육에는 글루카곤 수용체가 거의 없고, 에피네프린·Ca²⁺·AMP가 신호입니다.'},
+    {q:'McArdle병(당원병 5형)의 결손 효소는?', opts:['PYGM','G6PC1','GAA','AGL'], ex:'근육 phosphorylase가 없어 운동 중 경련과 근육통이 생기고, 운동 후 젖산이 오르지 않습니다.'},
+    {q:'인슐린이 글리코겐 합성을 켜는 경로는?', opts:['AKT가 GSK3를 인산화해 끄고 PP1이 glycogen synthase를 탈인산화','PKA가 glycogen synthase를 인산화','AMPK가 glycogen synthase를 켬','PHK를 활성화'], ex:'인산화가 glycogen synthase는 끄고 phosphorylase는 켜는, 반대 방향 조절입니다.'}
+  ]
+},
+{
+  id:'tag', grp:'lip', code:'TAG', title:'중성지방 · 인지질 · 지단백', short:'중성지방·인지질', color:'--m-tag',
+  intro:'글리세롤-3-인산에 지방산 세 개를 붙이면 중성지방(TAG)이 되고, 중간산물 포스파티드산(PA)과 다이아실글리세롤(DAG)에서 인지질이 갈라집니다. 혈중 지질은 지단백 입자로 운반됩니다.',
+  keys:['TAG: DHAP → G3P → (GPAT, 율속) LPA → (AGPAT) PA → (lipin) DAG → (DGAT) TAG',
+        '인지질: DAG + CDP-콜린/에탄올아민 → PC/PE (Kennedy 경로) · PA + CTP → CDP-DAG → PI, PG, 카디올리핀',
+        '지단백: 킬로미크론(장 → 말초) · VLDL → IDL → LDL(간 → 말초) · HDL(말초 → 간)'],
+  steps:[
+    {e:'GPD1', ef:'glycerol-3-phosphate dehydrogenase 1 (세포질)', ec:'1.1.1.8', s:'DHAP + NADH', p:'글리세롤-3-인산 (G3P)', co:['NADH → NAD⁺'], loc:'세포질', n:'해당과정의 DHAP가 지질 골격이 됩니다. 간·신장에서는 글리세롤 키나제로도 G3P를 만듭니다.'},
+    {e:'GPAT', ef:'glycerol-3-phosphate acyltransferase (GPAM 등)', ec:'2.3.1.15', s:'G3P + acyl-CoA', p:'LPA (lysophosphatidic acid)', co:[], loc:'미토콘드리아 외막 · 소포체', n:'TAG 합성의 율속 단계로 여겨집니다. SREBP1이 전사를 올립니다.'},
+    {e:'AGPAT', ef:'1-acylglycerol-3-phosphate O-acyltransferase', ec:'2.3.1.51', s:'LPA + acyl-CoA', p:'PA (phosphatidic acid)', co:[], loc:'소포체', n:'PA는 TAG와 인지질의 갈림길이자 mTOR 신호에 관여하는 지질입니다.'},
+    {e:'LPIN1', ef:'lipin 1 (PA phosphatase)', ec:'3.1.3.4', s:'PA + H₂O', p:'DAG (diacylglycerol) + Pi', co:['Mg²⁺'], loc:'소포체 · 핵', n:'mTORC1이 lipin 1을 인산화해 핵 밖에 붙잡아 두면 SREBP 활성이 유지됩니다(Peterson 2011, Cell).'},
+    {e:'DGAT1/2', ef:'diacylglycerol O-acyltransferase', ec:'2.3.1.20', s:'DAG + acyl-CoA', p:'TAG (triacylglycerol)', co:[], loc:'소포체 → 지질방울', n:'TAG 전용 마지막 단계. 지질방울은 남는 지방산의 독성을 막는 완충 역할도 합니다.'}
+  ],
+  side:[
+    {e:'CHKA', ef:'choline kinase α', ec:'2.7.1.32', s:'콜린 + ATP', p:'포스포콜린', co:['ATP'], loc:'세포질', n:'Kennedy 경로 첫 단계. 많은 암에서 포스포콜린이 높아 MRS(magnetic resonance spectroscopy) 지표로 씁니다.'},
+    {e:'PCYT1A', ef:'CTP:phosphocholine cytidylyltransferase α (CCTα)', ec:'2.7.7.15', s:'포스포콜린 + CTP', p:'CDP-콜린 + PPi', co:['CTP'], loc:'핵 · 소포체', n:'포스파티딜콜린(PC) 합성의 율속 단계. 막에 붙을 때 활성화됩니다.'},
+    {e:'CHPT1', ef:'choline phosphotransferase 1', ec:'2.7.8.2', s:'CDP-콜린 + DAG', p:'포스파티딜콜린 (PC) + CMP', co:[], loc:'골지 · 소포체', n:'에탄올아민도 같은 방식(ETNK → PCYT2 → EPT1)으로 PE가 됩니다.'},
+    {e:'PEMT', ef:'phosphatidylethanolamine N-methyltransferase', ec:'2.1.1.17', s:'PE + 3 SAM', p:'PC + 3 SAH', co:['SAM 3개'], loc:'간 소포체', n:'간에서 SAM을 가장 많이 쓰는 반응 중 하나입니다(메티오닌 탭과 연결).'},
+    {e:'CDS1/2', ef:'CDP-diacylglycerol synthase', ec:'2.7.7.41', s:'PA + CTP', p:'CDP-DAG + PPi', co:['CTP'], loc:'소포체 · 미토콘드리아', n:'포스파티딜이노시톨(PI), 포스파티딜글리세롤(PG), 카디올리핀의 출발점입니다.'},
+    {e:'PTDSS1/2', ef:'phosphatidylserine synthase 1/2', ec:'2.7.8.29', s:'PC 또는 PE + 세린', p:'포스파티딜세린 (PS) + 콜린 또는 에탄올아민', co:[], loc:'소포체 (미토콘드리아 연접부)', n:'머리기 교환 반응입니다. PS는 미토콘드리아에서 PISD가 탈카복실화해 PE가 됩니다.'},
+    {e:'PISD', ef:'phosphatidylserine decarboxylase', ec:'4.1.1.65', s:'포스파티딜세린', p:'포스파티딜에탄올아민 (PE) + CO₂', co:[], loc:'미토콘드리아 내막', n:'미토콘드리아 PE의 주 공급원입니다.'},
+    {e:'ATGL', ef:'adipose triglyceride lipase (PNPLA2)', ec:'3.1.1.3', s:'TAG + H₂O', p:'DAG + 지방산', co:[], loc:'지질방울', n:'지방 분해의 첫 효소. 이어 HSL(LIPE)이 DAG를, MGLL이 모노아실글리세롤을 분해합니다. 에피네프린 → PKA가 HSL과 perilipin을 인산화합니다.'},
+    {e:'LPL', ef:'lipoprotein lipase', ec:'3.1.1.34', s:'킬로미크론 · VLDL의 TAG', p:'지방산 + 글리세롤 (조직이 흡수)', co:['apoC-II (활성화)'], loc:'모세혈관 내피 표면', n:'TAG가 빠질수록 지단백 입자는 작아지고 밀도는 높아집니다(VLDL → IDL → LDL).'}
+  ],
+  notes:['지단백: 킬로미크론(apoB-48, 식이 지질을 장에서 말초로) · VLDL(apoB-100, 간에서 말초로) → IDL → LDL(콜레스테롤 운반, LDLR로 흡수) · HDL(apoA-I, 말초 콜레스테롤을 간으로 되돌리는 역콜레스테롤 수송). LCAT가 HDL의 콜레스테롤을 에스터화합니다.'],
+  order:[{t:'DHAP',f:'해당과정에서'},{t:'글리세롤-3-인산',f:'glycerol-3-phosphate'},{t:'LPA',f:'lysophosphatidic acid'},{t:'PA',f:'phosphatidic acid'},{t:'DAG',f:'diacylglycerol'},{t:'TAG',f:'triacylglycerol'}],
+  via:['GPD1 (NADH)','GPAT (+ acyl-CoA)','AGPAT (+ acyl-CoA)','lipin 1 (− Pi)','DGAT (+ acyl-CoA)'],
+  quiz:[
+    {q:'중성지방과 인지질 합성이 갈라지는 공통 전구체는?', opts:['포스파티드산(PA)과 DAG','콜레스테롤','스핑고신','acetyl-CoA'], ex:'PA → DAG → TAG 또는 PC·PE, PA → CDP-DAG → PI·PG·카디올리핀으로 갈라집니다.'},
+    {q:'Kennedy 경로에서 포스파티딜콜린 합성의 율속 효소는?', opts:['PCYT1A (CCTα)','CHKA','CHPT1','PEMT'], ex:'CCTα는 막의 PC가 부족해 막 성질이 바뀌면 막에 붙어 활성화됩니다.'},
+    {q:'Kennedy 경로에서 머리기를 활성화하는 뉴클레오타이드는?', opts:['CTP','UTP','ATP','GTP'], ex:'CDP-콜린, CDP-에탄올아민, CDP-DAG처럼 인지질 합성은 CTP를 씁니다(글리코겐은 UTP).'},
+    {q:'PEMT 반응의 특징은?', opts:['간에서 PE를 SAM 세 개로 메틸화해 PC를 만든다','콜린에서 PC를 만든다','PS를 PE로 바꾼다','세포질에서 일어난다'], ex:'PEMT 결손 생쥐는 콜린 결핍 식이에서 지방간이 생깁니다. SAM 소비가 커서 메틸화 대사와도 연결됩니다.'},
+    {q:'지방 분해의 첫 번째 효소는?', opts:['ATGL','HSL','MGLL','LPL'], ex:'ATGL(TAG → DAG) → HSL(DAG → MAG) → MGLL(MAG → 글리세롤 + 지방산). LPL은 혈중 지단백의 TAG를 분해합니다.'},
+    {q:'mTORC1이 lipin 1을 인산화했을 때의 결과는?', opts:['lipin 1이 핵 밖에 머물러 SREBP 활성이 유지된다','lipin 1이 핵으로 들어가 SREBP를 억제한다','TAG 분해가 늘어난다','PA가 줄어든다'], ex:'mTORC1이 꺼지면 lipin 1이 핵으로 들어가 SREBP 표적 유전자를 억제합니다(Peterson 2011, Cell).'},
+    {q:'LPL을 활성화하는 아포지단백은?', opts:['apoC-II','apoB-100','apoA-I','apoE'], ex:'apoC-II가 없으면 킬로미크론의 TAG를 분해하지 못해 고중성지방혈증이 생깁니다.'},
+    {q:'HDL의 주된 역할은?', opts:['말초 조직의 콜레스테롤을 간으로 되돌리는 역콜레스테롤 수송','식이 지질을 장에서 말초로 운반','간의 TAG를 말초로 운반','LDL을 만든다'], ex:'apoA-I와 LCAT가 핵심입니다. 킬로미크론과 VLDL은 TAG 운반체입니다.'}
+  ]
+},
+{
+  id:'eico', grp:'lip', code:'EIC', title:'에이코사노이드', short:'에이코사노이드', color:'--m-eico',
+  intro:'막 인지질에서 떨어져 나온 아라키돈산(C20:4)이 COX 경로로 프로스타글란딘·트롬복세인을, LOX 경로로 류코트리엔을 만듭니다. 짧게 작용하는 국소 신호 분자입니다.',
+  keys:['cPLA2 → 아라키돈산 → COX(PTGS1/2) → PGH₂ → PGE₂ · PGI₂ · TXA₂ 등',
+        '아스피린은 COX를 비가역 아세틸화, 다른 NSAID는 가역 억제',
+        '5-LOX(ALOX5) → 류코트리엔(LTB₄, 시스테이닐 LT)'],
+  steps:[
+    {e:'PLA2G4A', ef:'cytosolic phospholipase A2α (cPLA2α)', ec:'3.1.1.4', s:'막 인지질 (sn-2 아라키돈산)', p:'아라키돈산 + 리소인지질', co:['Ca²⁺'], loc:'세포질 → 핵막 · 소포체', n:'Ca²⁺와 MAPK 인산화가 활성화합니다. 에이코사노이드 합성의 실질적 율속 단계입니다.'},
+    {e:'PTGS1/2', dom:'cyclooxygenase 활성', ef:'prostaglandin-endoperoxide synthase (COX-1/COX-2)', ec:'1.14.99.1', s:'아라키돈산 + 2 O₂', p:'PGG₂', co:['헴'], loc:'소포체 · 핵막', n:'COX-1은 늘 발현되고 COX-2는 염증과 종양에서 유도됩니다. 아스피린은 COX-1 Ser530을 비가역 아세틸화합니다.'},
+    {e:'PTGS1/2', dom:'peroxidase 활성', ef:'같은 효소의 두 번째 활성', ec:'1.14.99.1', s:'PGG₂', p:'PGH₂', co:['헴'], loc:'소포체 · 핵막', n:'PGH₂는 여러 프로스타노이드의 공통 전구체입니다.'},
+    {e:'PTGES', ef:'prostaglandin E synthase (mPGES-1)', ec:'5.3.99.3', s:'PGH₂', p:'PGE₂', co:['GSH'], loc:'소포체', n:'PGE₂는 종양에서 NK 세포와 cDC1 수지상세포를 억제해 면역회피를 돕습니다(Böttcher 2018, Cell).'}
+  ],
+  side:[
+    {e:'TBXAS1', ef:'thromboxane A synthase 1', ec:'5.3.99.5', s:'PGH₂', p:'TXA₂', co:['헴 (P450)'], loc:'혈소판', n:'혈소판 응집과 혈관 수축. 저용량 아스피린이 혈소판 TXA₂를 막아 심혈관 예방에 쓰입니다.'},
+    {e:'PTGIS', ef:'prostacyclin synthase', ec:'5.3.99.4', s:'PGH₂', p:'PGI₂ (프로스타사이클린)', co:['헴 (P450)'], loc:'혈관 내피', n:'TXA₂와 반대로 응집 억제와 혈관 확장.'},
+    {e:'ALOX5', ef:'arachidonate 5-lipoxygenase (FLAP과 함께)', ec:'1.13.11.34', s:'아라키돈산 + O₂', p:'5-HPETE → LTA₄', co:['Fe (비헴)'], loc:'핵막', n:'LTA₄는 LTB₄(호중구 유인) 또는 시스테이닐 LT(LTC₄, GSH가 붙음; 기관지 수축)가 됩니다. zileuton이 억제합니다.'},
+    {e:'HPGD', ef:'15-hydroxyprostaglandin dehydrogenase (15-PGDH)', ec:'1.1.1.141', s:'PGE₂ + NAD⁺', p:'15-keto-PGE₂ (불활성) + NADH', co:['NAD⁺'], loc:'세포질', n:'PGE₂를 끄는 효소. 대장암에서 자주 소실되어 PGE₂가 쌓입니다.'}
+  ],
+  notes:['대장암에서는 COX-2가 오르고 HPGD가 줄어 PGE₂가 쌓입니다. 아스피린의 대장암 예방 효과가 이 축과 관련된다고 봅니다. 글루코코르티코이드는 PLA2를 간접 억제하고 COX-2 유도를 막아 항염 작용을 합니다.'],
+  order:[{t:'막 인지질',f:'sn-2 아라키돈산'},{t:'아라키돈산',f:'C20:4 n-6'},{t:'PGG₂',f:'고리 과산화물'},{t:'PGH₂',f:'공통 전구체'},{t:'PGE₂',f:'prostaglandin E2'}],
+  via:['cPLA2α (Ca²⁺)','COX (cyclooxygenase, + 2 O₂)','COX (peroxidase)','mPGES-1'],
+  quiz:[
+    {q:'막 인지질에서 아라키돈산을 떼어내는 효소는?', opts:['cPLA2α (PLA2G4A)','COX-2','PLC','ATGL'], ex:'Ca²⁺가 cPLA2를 핵막·소포체로 옮기고 MAPK가 활성을 올립니다.'},
+    {q:'아스피린이 다른 NSAID와 다른 점은?', opts:['COX를 비가역적으로 아세틸화한다','COX를 가역적으로 억제한다','LOX만 억제한다','PLA2를 억제한다'], ex:'핵이 없는 혈소판은 새 COX를 못 만들어 아스피린 효과가 혈소판 수명(약 10일) 내내 갑니다.'},
+    {q:'TXA₂와 PGI₂의 작용으로 옳은 것은?', opts:['TXA₂는 혈소판 응집·혈관 수축, PGI₂는 그 반대','둘 다 응집을 촉진','TXA₂는 혈관 확장','PGI₂는 혈소판에서 만든다'], ex:'혈소판의 TXA₂와 내피의 PGI₂가 균형을 이룹니다.'},
+    {q:'류코트리엔 합성의 첫 효소는?', opts:['5-LOX (ALOX5)','COX-1','mPGES-1','TBXAS1'], ex:'5-LOX가 FLAP의 도움으로 LTA₄까지 만듭니다. 천식 치료제 zileuton(5-LOX)과 montelukast(시스테이닐 LT 수용체)가 이 축을 겨냥합니다.'},
+    {q:'대장암에서 자주 소실되어 PGE₂를 쌓이게 하는 효소는?', opts:['HPGD (15-PGDH)','PTGES','COX-1','cPLA2'], ex:'HPGD는 PGE₂를 불활성형으로 산화하는 종양 억제 효소입니다.'},
+    {q:'종양의 PGE₂가 면역회피를 돕는 기전으로 보고된 것은?', opts:['NK 세포와 cDC1 수지상세포의 기능과 유입을 억제','T 세포를 직접 죽인다','항원을 분해한다','MHC를 늘린다'], ex:'COX를 막으면 NK–cDC1 축이 살아나 항종양 면역이 회복됐습니다(Böttcher 2018, Cell).'}
+  ]
+},
+{
+  id:'steroid', grp:'lip', code:'STH', title:'스테로이드 호르몬 · 담즙산', short:'스테로이드·담즙산', color:'--m-steroid',
+  intro:'콜레스테롤의 곁사슬을 잘라 프레그네놀론을 만든 뒤, P450 효소들이 위치를 바꿔 가며 수산화해 코르티솔·알도스테론·성호르몬을 만듭니다. 간에서는 콜레스테롤이 담즙산이 되고 글리신이나 타우린과 결합합니다.',
+  keys:['콜레스테롤 → (StAR + CYP11A1, 율속) 프레그네놀론 → (HSD3B2) 프로게스테론 → (CYP17A1) → (CYP21A2) → (CYP11B1) 코르티솔',
+        '가지: CYP11B2 → 알도스테론 / CYP17A1 lyase → DHEA → 테스토스테론 → (SRD5A2) DHT · (CYP19A1) 에스트라디올',
+        '담즙산: CYP7A1(율속) → 콜산·케노디옥시콜산 → (BAAT) 글리신 · 타우린 결합'],
+  steps:[
+    {e:'CYP11A1', ef:'cholesterol side-chain cleavage enzyme (P450scc), StAR가 콜레스테롤 공급', ec:'1.14.15.6', s:'콜레스테롤 + 3 O₂ + NADPH', p:'프레그네놀론 + isocaproaldehyde', co:['NADPH','adrenodoxin'], loc:'미토콘드리아 내막', n:'StAR가 콜레스테롤을 외막에서 내막으로 옮기는 것이 실제 율속 단계입니다. ACTH와 LH가 자극합니다.'},
+    {e:'HSD3B2', ef:'3β-hydroxysteroid dehydrogenase/Δ5-Δ4 isomerase 2', ec:'1.1.1.145', s:'프레그네놀론 + NAD⁺', p:'프로게스테론 + NADH', co:['NAD⁺'], loc:'소포체', n:'Δ5에서 Δ4 스테로이드로 바꿉니다.'},
+    {e:'CYP17A1', dom:'17α-hydroxylase 활성', ef:'steroid 17α-hydroxylase/17,20-lyase', ec:'1.14.14.19', s:'프로게스테론 + O₂ + NADPH', p:'17α-하이드록시프로게스테론', co:['NADPH','POR'], loc:'소포체', n:'코르티솔과 성호르몬 쪽으로 가는 관문. 알도스테론 쪽(사구대)에는 이 효소가 없습니다.'},
+    {e:'CYP21A2', ef:'steroid 21-hydroxylase', ec:'1.14.14.16', s:'17α-하이드록시프로게스테론 + O₂ + NADPH', p:'11-디옥시코르티솔', co:['NADPH'], loc:'소포체', n:'결손이 선천성 부신 과형성(CAH)의 90% 이상을 차지합니다. 코르티솔·알도스테론이 부족하고 안드로겐이 넘칩니다.'},
+    {e:'CYP11B1', ef:'steroid 11β-hydroxylase', ec:'1.14.15.4', s:'11-디옥시코르티솔 + O₂ + NADPH', p:'코르티솔', co:['NADPH','adrenodoxin'], loc:'미토콘드리아 내막', n:'부신 속상대에서 일합니다.'}
+  ],
+  side:[
+    {e:'CYP11B2', ef:'aldosterone synthase', ec:'1.14.15.5', s:'11-디옥시코르티코스테론', p:'알도스테론 (코르티코스테론 경유)', co:['NADPH'], loc:'부신 사구대 미토콘드리아', n:'안지오텐신 II와 K⁺가 자극합니다.'},
+    {e:'CYP17A1', dom:'17,20-lyase 활성', ef:'steroid 17α-hydroxylase/17,20-lyase', ec:'1.14.14.32', s:'17α-하이드록시프레그네놀론', p:'DHEA (dehydroepiandrosterone)', co:['NADPH','cytochrome b5'], loc:'소포체', n:'안드로겐 합성의 관문. abiraterone이 CYP17A1을 억제해 거세 저항성 전립선암 치료에 쓰입니다.'},
+    {e:'HSD17B3', ef:'17β-hydroxysteroid dehydrogenase 3', ec:'1.1.1.64', s:'안드로스텐디온 + NADPH', p:'테스토스테론', co:['NADPH'], loc:'고환', n:'전립선암 세포는 부신 안드로겐을 원료로 스스로 테스토스테론을 만들기도 합니다.'},
+    {e:'SRD5A2', ef:'steroid 5α-reductase 2', ec:'1.3.1.22', s:'테스토스테론 + NADPH', p:'DHT (dihydrotestosterone)', co:['NADPH'], loc:'전립선 · 피부', n:'DHT는 안드로겐 수용체에 더 강하게 붙습니다. finasteride가 억제합니다.'},
+    {e:'CYP19A1', ef:'aromatase', ec:'1.14.14.14', s:'테스토스테론 / 안드로스텐디온', p:'에스트라디올 / 에스트론', co:['NADPH'], loc:'난소 · 지방 · 유방 조직', n:'letrozole·anastrozole이 억제해 폐경 후 ER 양성 유방암 치료에 씁니다.'},
+    {e:'CYP7A1', ef:'cholesterol 7α-hydroxylase', ec:'1.14.14.23', s:'콜레스테롤 + O₂ + NADPH', p:'7α-하이드록시콜레스테롤', co:['NADPH'], loc:'간 소포체', n:'담즙산 합성의 율속 단계. 담즙산이 FXR → SHP(및 장의 FGF19)를 통해 억제합니다.'},
+    {e:'BAAT', ef:'bile acid-CoA:amino acid N-acyltransferase', ec:'2.3.1.65', s:'콜릴-CoA + 글리신 또는 타우린', p:'글리코콜산 · 타우로콜산', co:[], loc:'간 퍼옥시좀', n:'결합하면 pKa가 낮아져 장에서 이온화된 채로 남아 지질을 잘 유화합니다. 장내 세균은 이를 다시 떼어내고 2차 담즙산을 만듭니다.'}
+  ],
+  notes:['부신 피질 세 층: 사구대 → 알도스테론(CYP11B2), 속상대 → 코르티솔(CYP17A1 + CYP11B1), 망상대 → DHEA(CYP17A1 lyase). 어느 효소가 있느냐가 어느 호르몬을 만드는지 정합니다.'],
+  order:[{t:'콜레스테롤',f:'cholesterol'},{t:'프레그네놀론',f:'pregnenolone'},{t:'프로게스테론',f:'progesterone'},{t:'17α-OH-프로게스테론',f:'17α-hydroxyprogesterone'},{t:'11-디옥시코르티솔',f:'11-deoxycortisol'},{t:'코르티솔',f:'cortisol'}],
+  via:['StAR · CYP11A1 (율속)','HSD3B2','CYP17A1 (17α-hydroxylase)','CYP21A2','CYP11B1'],
+  quiz:[
+    {q:'스테로이드 호르몬 합성의 율속 단계는?', opts:['StAR가 콜레스테롤을 미토콘드리아 내막으로 옮기는 단계 (그 뒤 CYP11A1)','CYP21A2','HSD3B2','CYP19A1'], ex:'CYP11A1이 곁사슬을 자르려면 콜레스테롤이 내막에 있어야 하고, 이 운반을 StAR가 맡습니다. ACTH가 StAR를 빠르게 올립니다.'},
+    {q:'선천성 부신 과형성(CAH)에서 가장 흔한 결손 효소는?', opts:['CYP21A2','CYP11B1','CYP17A1','CYP11A1'], ex:'코르티솔이 부족해 ACTH가 오르고, 막힌 기질이 안드로겐 쪽으로 넘쳐 여아의 남성화가 생깁니다.'},
+    {q:'거세 저항성 전립선암 치료제 abiraterone의 표적은?', opts:['CYP17A1','SRD5A2','CYP19A1','안드로겐 수용체'], ex:'고환 외(부신, 종양 내) 안드로겐 합성을 막습니다. enzalutamide는 안드로겐 수용체를 직접 막습니다.'},
+    {q:'aromatase 억제제(letrozole, anastrozole)의 주된 용도는?', opts:['폐경 후 ER 양성 유방암','전립선 비대증','부신 기능 저하증','쿠싱 증후군'], ex:'폐경 후 에스트로겐은 주로 지방 조직의 aromatase가 만듭니다.'},
+    {q:'finasteride가 억제하는 효소는?', opts:['SRD5A2 (5α-reductase)','CYP17A1','HSD17B3','CYP19A1'], ex:'테스토스테론 → DHT를 막아 전립선 비대와 탈모 치료에 씁니다.'},
+    {q:'담즙산 합성의 율속 효소와 그 되먹임 경로는?', opts:['CYP7A1, 담즙산 → FXR → SHP·FGF19가 억제','HMGCR, 콜레스테롤이 억제','CYP11A1, ACTH가 억제','BAAT, 타우린이 억제'], ex:'담즙산이 장–간 순환으로 돌아오면 FXR이 CYP7A1 전사를 끕니다. 담즙산 배출은 콜레스테롤을 몸 밖으로 내보내는 주 경로이기도 합니다.'},
+    {q:'담즙산이 결합하는 아미노산은?', opts:['글리신과 타우린','글루타민과 아스파르트산','세린과 시스테인','알라닌과 류신'], ex:'BAAT가 결합시키며, 사람은 글리신 결합이 더 많고 생쥐는 거의 타우린 결합입니다.'}
+  ]
+},
+{
+  id:'aacat', grp:'aa', code:'AAC', title:'아미노산 분해', short:'아미노산 분해', color:'--m-aacat',
+  intro:'아미노산 분해는 두 갈래입니다. 질소는 아미노기 전이와 GLUD1을 거쳐 요소 회로로 가고, 탄소 골격은 일곱 개 종착지로 들어갑니다. 경로 지도는 대표 예인 페닐알라닌·티로신 분해이고, 곁가지에 분지사슬과 트립토판 분해를 넣었습니다.',
+  keys:['질소: 아미노산 → (아미노기 전이, PLP) → 글루탐산 → (GLUD1) → NH₄⁺ → 요소 회로',
+        '탄소 골격 종착지 7곳: 피루브산 · 옥살아세트산 · α-KG · 숙시닐-CoA · 푸마르산(포도당 생성) / acetyl-CoA · 아세토아세틸-CoA(케톤 생성)',
+        '순수 케톤 생성 아미노산은 류신과 라이신뿐'],
+  steps:[
+    {e:'PAH', ef:'phenylalanine hydroxylase', ec:'1.14.16.1', s:'페닐알라닌 + O₂ + BH4', p:'티로신 + BH2', co:['BH4 (tetrahydrobiopterin)','Fe²⁺'], loc:'간', n:'결손은 페닐케톤뇨증(PKU). BH4 재생 효소(DHPR) 결손도 같은 증상을 냅니다.'},
+    {e:'TAT', ef:'tyrosine aminotransferase', ec:'2.6.1.5', s:'티로신 + α-KG', p:'4-하이드록시페닐피루브산 + 글루탐산', co:['PLP'], loc:'간', n:'질소가 글루탐산으로 넘어갑니다. 글루코코르티코이드가 유도합니다.'},
+    {e:'HPD', ef:'4-hydroxyphenylpyruvate dioxygenase', ec:'1.13.11.27', s:'4-하이드록시페닐피루브산 + O₂', p:'호모젠티스산 + CO₂', co:['Fe²⁺','아스코르브산'], loc:'간', n:'nitisinone이 억제해 티로신혈증 1형 치료에 씁니다. 닮은 효소 HPDL은 CoQ 머리기 합성에 쓰입니다(Pacold 랩).'},
+    {e:'HGD', ef:'homogentisate 1,2-dioxygenase', ec:'1.13.11.5', s:'호모젠티스산 + O₂', p:'말레일아세토아세트산', co:['Fe²⁺'], loc:'간', n:'결손은 알캅톤뇨증(소변이 공기 중에서 검게 변함). 최초로 기술된 선천성 대사 이상 중 하나입니다(Garrod).'},
+    {e:'GSTZ1', ef:'maleylacetoacetate isomerase (glutathione S-transferase zeta 1)', ec:'5.2.1.2', s:'말레일아세토아세트산', p:'푸마릴아세토아세트산', co:['GSH'], loc:'세포질', n:'cis를 trans로 바꿉니다.'},
+    {e:'FAH', ef:'fumarylacetoacetate hydrolase', ec:'3.7.1.2', s:'푸마릴아세토아세트산 + H₂O', p:'푸마르산 + 아세토아세트산', co:[], loc:'세포질', n:'결손은 티로신혈증 1형(간 손상, 간암 위험). 티로신은 포도당 생성(푸마르산)과 케톤 생성(아세토아세트산)을 모두 합니다.'}
+  ],
+  side:[
+    {e:'ALT · AST', ef:'alanine aminotransferase (GPT) · aspartate aminotransferase (GOT)', ec:'2.6.1.2 · 2.6.1.1', s:'아미노산 + α-KG', p:'α-케토산 + 글루탐산', co:['PLP'], loc:'간 · 근육 등', n:'모든 아미노기 전이의 원형입니다. 혈중 ALT·AST는 간세포 손상 지표입니다.'},
+    {e:'GLUD1', ef:'glutamate dehydrogenase 1', ec:'1.4.1.3', s:'글루탐산 + NAD(P)⁺', p:'α-KG + NH₄⁺ + NAD(P)H', co:['NAD⁺ 또는 NADP⁺'], loc:'미토콘드리아', n:'ADP가 활성화하고 GTP가 억제합니다. 질소를 요소 회로로 넘기는 출구입니다.'},
+    {e:'BCAT1/2', ef:'branched-chain aminotransferase (1: 세포질, 2: 미토콘드리아)', ec:'2.6.1.42', s:'류신 · 이소류신 · 발린 + α-KG', p:'분지사슬 α-케토산 (BCKA) + 글루탐산', co:['PLP'], loc:'근육 등 간 외 조직', n:'분지사슬 아미노산은 간이 아니라 주로 근육에서 분해가 시작됩니다. 같은 KRAS 종양이라도 폐암은 BCAA를 적극적으로 쓰고 췌장암은 덜 씁니다(Mayers 2016, Science).'},
+    {e:'BCKDH', ef:'branched-chain α-ketoacid dehydrogenase complex', ec:'1.2.4.4', s:'BCKA + CoA + NAD⁺', p:'acyl-CoA + CO₂ + NADH', co:['TPP','리포산','CoA','FAD','NAD⁺'], loc:'미토콘드리아', n:'PDH·OGDH와 같은 구조. BCKDK가 인산화해 끕니다. 결손은 단풍당뇨병(MSUD).'},
+    {e:'IDO1/TDO2', ef:'indoleamine 2,3-dioxygenase 1 · tryptophan 2,3-dioxygenase', ec:'1.13.11.52 · 1.13.11.11', s:'트립토판 + O₂', p:'N-포르밀kynurenine', co:['헴'], loc:'세포질 (TDO2는 간)', n:'kynurenine 경로는 NAD⁺ de novo 합성으로 이어집니다. 종양과 면역세포의 IDO1은 트립토판을 고갈시키고 kynurenine으로 AHR을 켜 T 세포를 억제합니다.'}
+  ],
+  notes:['분지사슬 분해 산물: 류신 → acetyl-CoA + 아세토아세트산(HMG-CoA 경유, 케톤 생성), 발린 → 숙시닐-CoA(포도당 생성), 이소류신 → acetyl-CoA + 숙시닐-CoA(둘 다). 페닐알라닌·티로신·트립토판·이소류신·트레오닌은 포도당 생성과 케톤 생성을 모두 합니다.'],
+  order:[{t:'페닐알라닌',f:'phenylalanine'},{t:'티로신',f:'tyrosine'},{t:'4-하이드록시페닐피루브산',f:'4-hydroxyphenylpyruvate'},{t:'호모젠티스산',f:'homogentisate'},{t:'말레일아세토아세트산',f:'maleylacetoacetate'},{t:'푸마릴아세토아세트산',f:'fumarylacetoacetate'},{t:'푸마르산 + 아세토아세트산',f:'포도당 생성 + 케톤 생성'}],
+  via:['PAH (BH4)','TAT (− 아미노기)','HPD (− CO₂)','HGD','GSTZ1 (cis → trans)','FAH (+ H₂O)'],
+  quiz:[
+    {q:'순수하게 케톤 생성만 하는 아미노산은?', opts:['류신과 라이신','류신과 발린','라이신과 트립토판','이소류신과 트레오닌'], ex:'류신·라이신의 탄소는 acetyl-CoA와 아세토아세틸-CoA로만 갑니다.'},
+    {q:'아미노기 전이효소의 보조인자는?', opts:['PLP (비타민 B6)','TPP','비오틴','B12'], ex:'PLP가 아미노기를 받았다가(PMP) 다음 케토산에 넘깁니다(ping-pong 기전).'},
+    {q:'단풍당뇨병(MSUD)의 결손 효소는?', opts:['BCKDH','PAH','HGD','FAH'], ex:'분지사슬 α-케토산이 쌓여 소변에서 단풍 시럽 냄새가 납니다.'},
+    {q:'티로신 분해의 최종 산물은?', opts:['푸마르산과 아세토아세트산','숙시닐-CoA','피루브산','α-KG'], ex:'푸마르산은 포도당 쪽, 아세토아세트산은 케톤체 쪽으로 갑니다.'},
+    {q:'종양의 IDO1이 면역을 억제하는 방식은?', opts:['트립토판을 고갈시키고 kynurenine으로 AHR을 활성화한다','아르지닌을 분해한다','젖산을 분비한다','아데노신을 분비한다'], ex:'T 세포는 트립토판이 부족하면 GCN2 스트레스가 켜지고, kynurenine–AHR은 조절 T 세포 분화를 돕습니다.'},
+    {q:'같은 KRAS 변이 종양에서 분지사슬 아미노산 대사가 달랐던 연구의 결론은?', opts:['조직 기원에 따라 폐암은 BCAA를 많이 쓰고 췌장암은 덜 쓴다','유전자 변이가 같으면 대사도 같다','두 종양 모두 BCAA를 쓰지 않는다','췌장암만 BCAA에 의존한다'], ex:'Mayers 2016(Science): 대사 의존성은 유전형만큼 조직 맥락에 좌우됩니다.'},
+    {q:'GLUD1의 알로스테릭 조절로 옳은 것은?', opts:['ADP가 활성화하고 GTP가 억제한다','ATP가 활성화한다','NADPH만 활성화한다','조절되지 않는다'], ex:'에너지가 부족하면 글루탐산을 α-KG로 바꿔 TCA 회로에 보탭니다. GTP 억제가 풀리는 변이는 고인슐린–고암모니아혈증 증후군을 일으킵니다.'},
+    {q:'nitisinone의 표적과 용도는?', opts:['HPD, 티로신혈증 1형','PAH, 페닐케톤뇨증','FAH, 알캅톤뇨증','TAT, 티로신혈증 2형'], ex:'상류의 HPD를 막아 독성 중간산물(푸마릴아세토아세트산, succinylacetone)이 생기지 않게 합니다.'}
+  ]
+},
+{
+  id:'aader', grp:'aa', code:'AAD', title:'아미노산 유래 분자', short:'아미노산 유래 분자', color:'--m-aader',
+  intro:'아미노산은 단백질 재료일 뿐 아니라 신경전달물질, 호르몬, 에너지 완충 분자의 원료입니다. 경로 지도는 티로신에서 카테콜아민까지, 곁가지에 크레아틴·세로토닌·GABA·히스타민을 넣었습니다.',
+  keys:['카테콜아민: 티로신 → (TH, BH4, 율속) L-DOPA → (DDC, PLP) 도파민 → (DBH, 비타민 C) 노르에피네프린 → (PNMT, SAM) 에피네프린',
+        '크레아틴: 아르지닌 + 글리신 → (GATM, 신장) → 구아니디노아세트산 → (GAMT, 간, SAM) → 크레아틴',
+        '규칙: 수산화 효소(PAH·TH·TPH)는 BH4, 탈카복실화 효소(DDC·GAD·HDC·ODC1)는 PLP, 메틸화(PNMT·GAMT·PEMT)는 SAM'],
+  steps:[
+    {e:'TH', ef:'tyrosine hydroxylase', ec:'1.14.16.2', s:'티로신 + O₂ + BH4', p:'L-DOPA + BH2', co:['BH4','Fe²⁺'], loc:'도파민 신경 · 부신 수질', n:'카테콜아민 합성의 율속 단계. 카테콜아민이 되먹임 억제하고 PKA가 인산화해 활성화합니다.'},
+    {e:'DDC', ef:'aromatic L-amino acid decarboxylase (AADC)', ec:'4.1.1.28', s:'L-DOPA', p:'도파민 + CO₂', co:['PLP'], loc:'세포질', n:'5-HTP도 세로토닌으로 바꾸는 범용 효소입니다. carbidopa가 뇌 밖의 DDC를 막아 L-DOPA가 뇌로 더 들어가게 합니다(파킨슨병).'},
+    {e:'DBH', ef:'dopamine β-hydroxylase', ec:'1.14.17.1', s:'도파민 + O₂ + 아스코르브산', p:'노르에피네프린', co:['Cu²⁺','아스코르브산'], loc:'분비 소포 안', n:'카테콜아민 합성 중 유일하게 소포 안에서 일어납니다.'},
+    {e:'PNMT', ef:'phenylethanolamine N-methyltransferase', ec:'2.1.1.28', s:'노르에피네프린 + SAM', p:'에피네프린 + SAH', co:['SAM'], loc:'부신 수질 세포질', n:'부신 피질에서 흘러오는 코르티솔이 PNMT를 유도합니다.'}
+  ],
+  side:[
+    {e:'GATM', ef:'L-arginine:glycine amidinotransferase', ec:'2.1.4.1', s:'아르지닌 + 글리신', p:'구아니디노아세트산 + 오르니틴', co:[], loc:'신장 미토콘드리아', n:'크레아틴 합성 첫 단계. 크레아틴이 되먹임 억제합니다.'},
+    {e:'GAMT', ef:'guanidinoacetate N-methyltransferase', ec:'2.1.1.2', s:'구아니디노아세트산 + SAM', p:'크레아틴 + SAH', co:['SAM'], loc:'간', n:'몸 전체 SAM 소비의 큰 부분을 차지한다고 추정되는 반응입니다.'},
+    {e:'CKB/CKM', ef:'creatine kinase (B: 뇌형, M: 근육형, 미토콘드리아형 CKMT)', ec:'2.7.3.2', s:'크레아틴 + ATP', p:'포스포크레아틴 + ADP', co:[], loc:'근육 · 뇌', n:'ATP를 빠르게 재충전하는 완충 장치. KRAS 간암 모델이 초기 종양 형성에 크레아틴 대사를 쓴다는 preprint가 있습니다(Birsoy 랩, 2025).'},
+    {e:'TPH1/2', ef:'tryptophan hydroxylase (1: 장·말초, 2: 뇌)', ec:'1.14.16.4', s:'트립토판 + O₂ + BH4', p:'5-HTP (5-hydroxytryptophan)', co:['BH4','Fe²⁺'], loc:'장 크롬친화세포 · 세로토닌 신경', n:'세로토닌 합성의 율속 단계. 이어 DDC가 세로토닌을 만들고, 송과선에서는 멜라토닌까지 갑니다.'},
+    {e:'GAD1/2', ef:'glutamate decarboxylase', ec:'4.1.1.15', s:'글루탐산', p:'GABA (γ-aminobutyric acid) + CO₂', co:['PLP'], loc:'억제성 신경', n:'흥분성 글루탐산에서 억제성 GABA가 만들어집니다. GAD 자가항체는 1형 당뇨와 관련됩니다.'},
+    {e:'HDC', ef:'histidine decarboxylase', ec:'4.1.1.22', s:'히스티딘', p:'히스타민 + CO₂', co:['PLP'], loc:'비만세포 · 위 ECL 세포', n:'알레르기 반응과 위산 분비의 신호 분자입니다.'}
+  ],
+  notes:['NO(아르지닌 → NOS)와 폴리아민(오르니틴 → ODC1)은 요소 회로 탭, GSH와 타우린은 메티오닌·황전이 탭, 헴은 헴 탭에 있습니다.'],
+  order:[{t:'티로신',f:'tyrosine'},{t:'L-DOPA',f:'3,4-dihydroxyphenylalanine'},{t:'도파민',f:'dopamine'},{t:'노르에피네프린',f:'norepinephrine'},{t:'에피네프린',f:'epinephrine'}],
+  via:['TH (BH4, 율속)','DDC (PLP, − CO₂)','DBH (비타민 C, Cu)','PNMT (SAM)'],
+  quiz:[
+    {q:'카테콜아민 합성의 율속 효소와 보조인자는?', opts:['TH, BH4','DDC, PLP','DBH, 비타민 C','PNMT, SAM'], ex:'TH가 티로신을 L-DOPA로 수산화합니다. 같은 계열 효소인 PAH·TPH도 BH4를 씁니다.'},
+    {q:'파킨슨병에서 L-DOPA와 carbidopa를 함께 쓰는 이유는?', opts:['carbidopa가 뇌 밖의 DDC를 막아 L-DOPA가 뇌로 더 들어가게 한다','carbidopa가 도파민 수용체를 활성화한다','carbidopa가 TH를 활성화한다','carbidopa가 MAO를 억제한다'], ex:'carbidopa는 혈액–뇌 장벽을 거의 넘지 못해 말초 DDC만 막습니다.'},
+    {q:'도파민 β-수산화효소(DBH)의 보조인자는?', opts:['아스코르브산과 구리','BH4와 철','PLP','SAM'], ex:'DBH는 분비 소포 안에서 일하는 구리 효소이고 아스코르브산이 전자를 줍니다.'},
+    {q:'노르에피네프린을 에피네프린으로 바꿀 때 메틸기를 주는 것은?', opts:['SAM','5-메틸-THF','베타인','메티오닌 자체'], ex:'PNMT는 SAM 의존 메틸전이효소이고, 부신 피질의 코르티솔이 발현을 올립니다.'},
+    {q:'크레아틴 합성의 두 단계와 장소로 옳은 것은?', opts:['GATM(신장, 아르지닌 + 글리신) → GAMT(간, SAM)','GAMT(신장) → GATM(간)','CK(근육) → GATM(뇌)','둘 다 근육'], ex:'만들어진 크레아틴은 혈액으로 근육과 뇌에 운반되어 creatine kinase가 씁니다.'},
+    {q:'아미노산 탈카복실화 효소(DDC, GAD, HDC, ODC1)의 공통 보조인자는?', opts:['PLP','TPP','비오틴','FAD'], ex:'PLP가 아미노산과 Schiff 염기를 만들어 카복실기가 떨어지기 쉽게 합니다.'},
+    {q:'세로토닌 합성의 율속 효소는?', opts:['TPH (tryptophan hydroxylase)','DDC','IDO1','MAO-A'], ex:'TPH1은 장에서 몸 전체 세로토닌 대부분을, TPH2는 뇌의 세로토닌을 만듭니다.'},
+    {q:'GABA의 원료 아미노산은?', opts:['글루탐산','글루타민','글리신','아스파르트산'], ex:'GAD가 글루탐산의 α-카복실기를 떼어 GABA를 만듭니다.'}
+  ]
+},
+{
+  id:'heme', grp:'aa', code:'HEM', title:'헴 합성 · 분해', short:'헴', color:'--m-heme',
+  intro:'글리신과 숙시닐-CoA로 시작해 여덟 단계 만에 철이 들어간 헴을 만듭니다. 첫 단계와 마지막 세 단계는 미토콘드리아, 가운데 네 단계는 세포질입니다. 헴은 분해되어 빌리루빈으로 배출됩니다.',
+  keys:['ALAS(율속, PLP) → ALAD → HMBS → UROS → UROD → CPOX → PPOX → FECH(+ Fe²⁺)',
+        '구획: 미토콘드리아(1단계) → 세포질(2–5) → 미토콘드리아(6–8)',
+        '분해: 헴 → (HMOX1) 빌리베르딘 + Fe²⁺ + CO → (BLVRA) 빌리루빈 → (UGT1A1) 결합 빌리루빈'],
+  steps:[
+    {e:'ALAS1/2', ef:'5-aminolevulinate synthase (1: 모든 조직, 2: 적혈구)', ec:'2.3.1.37', s:'글리신 + 숙시닐-CoA', p:'ALA (5-aminolevulinic acid) + CoA + CO₂', co:['PLP'], loc:'미토콘드리아 기질', n:'율속 단계. 헴이 ALAS1의 전사·미토콘드리아 유입·안정성을 모두 억제합니다. ALAS2는 철이 있어야 번역됩니다(5′UTR의 IRE).'},
+    {e:'ALAD', ef:'ALA dehydratase (porphobilinogen synthase)', ec:'4.2.1.24', s:'2 ALA', p:'PBG (porphobilinogen) + 2 H₂O', co:['Zn²⁺'], loc:'세포질', n:'납(Pb)이 Zn²⁺ 자리를 대신해 억제하므로 납 중독에서 ALA가 쌓입니다.'},
+    {e:'HMBS', ef:'hydroxymethylbilane synthase (PBG deaminase)', ec:'2.5.1.61', s:'4 PBG', p:'하이드록시메틸빌레인 + 4 NH₄⁺', co:['dipyrromethane 보조인자'], loc:'세포질', n:'결손은 급성 간헐성 포르피린증(AIP). 약물이나 금식이 ALAS1을 올리면 ALA·PBG가 쌓여 발작이 생깁니다. RNAi 약물 givosiran이 ALAS1을 낮춰 치료합니다.'},
+    {e:'UROS', ef:'uroporphyrinogen III synthase', ec:'4.2.1.75', s:'하이드록시메틸빌레인', p:'uroporphyrinogen III', co:[], loc:'세포질', n:'고리를 닫으며 한 피롤을 뒤집어 III형 이성질체를 만듭니다. 결손은 선천성 적혈구 생성 포르피린증.'},
+    {e:'UROD', ef:'uroporphyrinogen decarboxylase', ec:'4.1.1.37', s:'uroporphyrinogen III', p:'coproporphyrinogen III + 4 CO₂', co:[], loc:'세포질', n:'결손은 만발성 피부 포르피린증(가장 흔한 포르피린증). 빛에 피부 물집이 생깁니다.'},
+    {e:'CPOX', ef:'coproporphyrinogen oxidase', ec:'1.3.3.3', s:'coproporphyrinogen III + O₂', p:'protoporphyrinogen IX + 2 CO₂', co:['O₂'], loc:'미토콘드리아 막간', n:'다시 미토콘드리아로 들어갑니다.'},
+    {e:'PPOX', ef:'protoporphyrinogen oxidase', ec:'1.3.3.4', s:'protoporphyrinogen IX + O₂', p:'protoporphyrin IX (PpIX)', co:['FAD'], loc:'미토콘드리아 내막', n:'5-ALA를 투여하면 종양 세포에 PpIX가 쌓여 형광을 내므로 교모세포종 형광 유도 수술에 씁니다.'},
+    {e:'FECH', ef:'ferrochelatase', ec:'4.98.1.1', s:'protoporphyrin IX + Fe²⁺', p:'헴 + 2H⁺', co:['Fe-S 클러스터 (사람 효소)'], loc:'미토콘드리아 기질 쪽 내막', n:'납이 억제합니다. 결손은 적혈구 생성 프로토포르피린증(빛 과민).'}
+  ],
+  side:[
+    {e:'SLC25A38', ef:'mitochondrial glycine carrier', ec:'수송체', s:'세포질 글리신', p:'미토콘드리아 글리신', co:[], loc:'미토콘드리아 내막', n:'헴 합성용 글리신을 들여옵니다. 결손은 선천성 철적모구빈혈.'},
+    {e:'HMOX1', ef:'heme oxygenase 1 (유도형)', ec:'1.14.14.18', s:'헴 + 3 O₂ + NADPH', p:'빌리베르딘 + Fe²⁺ + CO', co:['NADPH (P450 reductase)'], loc:'소포체', n:'NRF2 표적이고 스트레스로 유도됩니다. 풀려난 철이 페롭토시스를 거들 수도 있습니다.'},
+    {e:'BLVRA', ef:'biliverdin reductase A', ec:'1.3.1.24', s:'빌리베르딘 + NAD(P)H', p:'빌리루빈', co:['NAD(P)H'], loc:'세포질', n:'멍이 초록 → 노랑으로 바뀌는 과정입니다. 빌리루빈은 지용성이라 알부민에 실려 간으로 갑니다.'},
+    {e:'UGT1A1', ef:'UDP-glucuronosyltransferase 1A1', ec:'2.4.1.17', s:'빌리루빈 + 2 UDP-글루쿠론산', p:'빌리루빈 다이글루쿠로나이드 (결합 빌리루빈)', co:[], loc:'간 소포체', n:'활성이 낮으면 Gilbert 증후군, 거의 없으면 Crigler-Najjar 증후군. 항암제 irinotecan의 활성 대사물 SN-38도 이 효소가 해독해, UGT1A1*28 보유자는 독성이 큽니다.'}
+  ],
+  notes:['납 중독 소견: ALAD와 FECH가 억제되어 ALA가 쌓이고 적혈구에 아연-프로토포르피린이 늘어납니다. 철이 없으면 FECH가 PpIX에 아연을 넣기 때문에 철 결핍에서도 아연-프로토포르피린이 오릅니다.'],
+  order:[{t:'글리신 + 숙시닐-CoA',f:'미토콘드리아'},{t:'ALA',f:'5-aminolevulinic acid'},{t:'PBG',f:'porphobilinogen'},{t:'하이드록시메틸빌레인',f:'hydroxymethylbilane'},{t:'uroporphyrinogen III',f:'세포질'},{t:'coproporphyrinogen III',f:'세포질 → 미토콘드리아'},{t:'protoporphyrinogen IX',f:'미토콘드리아'},{t:'protoporphyrin IX',f:'PpIX, 형광'},{t:'헴',f:'heme'}],
+  via:['ALAS (PLP, 율속)','ALAD (ALA × 2)','HMBS (PBG × 4)','UROS (고리 닫힘)','UROD (− 4 CO₂)','CPOX','PPOX','FECH (+ Fe²⁺)'],
+  quiz:[
+    {q:'헴 합성의 율속 효소와 보조인자는?', opts:['ALAS, PLP','FECH, 철','ALAD, 아연','UROD, TPP'], ex:'글리신과 숙시닐-CoA를 축합하는 PLP 효소입니다. 비타민 B6가 부족하면 철적모구빈혈이 생길 수 있습니다.'},
+    {q:'헴이 자신의 합성을 조절하는 방식은?', opts:['ALAS1의 전사·미토콘드리아 유입·안정성을 억제','FECH를 활성화','ALAD를 활성화','HMOX1을 억제'], ex:'급성 포르피린증 발작 때 정맥 헴(hemin)을 주는 이유입니다.'},
+    {q:'납 중독에서 억제되는 효소 조합은?', opts:['ALAD와 FECH','ALAS와 HMBS','UROS와 UROD','CPOX와 PPOX'], ex:'ALAD 억제로 ALA가 쌓이고, FECH 억제로 아연-프로토포르피린이 늘어납니다.'},
+    {q:'헴 합성 중 미토콘드리아에서 일어나는 단계는?', opts:['첫 단계(ALAS)와 마지막 세 단계(CPOX·PPOX·FECH)','처음 네 단계','가운데 네 단계','마지막 단계만'], ex:'시작과 끝이 미토콘드리아이고 가운데가 세포질이라 중간산물이 막을 두 번 건넙니다.'},
+    {q:'5-ALA를 이용한 형광 유도 수술의 원리는?', opts:['종양에서 PpIX가 헴으로 전환되지 못하고 쌓여 형광을 낸다','ALA가 직접 형광을 낸다','종양이 헴을 분해한다','빌리루빈이 형광을 낸다'], ex:'외부 ALA가 율속 단계 ALAS를 건너뛰어 PpIX를 늘리고, 종양에서는 FECH 단계가 상대적으로 병목입니다.'},
+    {q:'HMOX1이 헴을 분해할 때 생기는 것은?', opts:['빌리베르딘, Fe²⁺, CO','빌리루빈, Fe³⁺, CO₂','PpIX와 철','요산'], ex:'몸에서 CO가 생기는 거의 유일한 반응입니다.'},
+    {q:'급성 간헐성 포르피린증(AIP)의 결손 효소는?', opts:['HMBS (PBG deaminase)','UROD','FECH','ALAD'], ex:'ALA와 PBG가 쌓여 복통과 신경 증상을 일으킵니다. 피부 광과민은 없습니다.'},
+    {q:'irinotecan 독성이 UGT1A1*28 보유자에서 큰 이유는?', opts:['활성 대사물 SN-38의 글루쿠론산 결합이 느려서','irinotecan이 헴을 만들어서','빌리루빈이 irinotecan을 활성화해서','HMOX1이 결손되어서'], ex:'빌리루빈과 같은 효소로 해독됩니다. 그래서 Gilbert 증후군 환자에서 호중구 감소와 설사가 심해질 수 있습니다.'}
+  ]
+},
+{
+  id:'nucdeg', grp:'nuc', code:'NDG', title:'뉴클레오타이드 분해', short:'뉴클레오타이드 분해', color:'--m-nucdeg',
+  intro:'퓨린은 고리를 깨지 못하고 요산으로 내보내지만, 피리미딘 고리는 β-아미노산·NH₄⁺·CO₂로 완전히 분해됩니다. 분해 중간산물인 염기와 뉴클레오사이드는 salvage로 재활용되기도 합니다.',
+  keys:['퓨린: AMP → 아데노신 → (ADA) 이노신 → (PNP) 하이포잔틴 → (XDH) 잔틴 → (XDH) 요산',
+        '사람은 요산산화효소(uricase)가 위유전자라 요산이 최종 산물 → 통풍',
+        '피리미딘: 우라실·티민 → (DPYD, 율속) → β-알라닌 · β-아미노이소부티르산'],
+  steps:[
+    {e:'NT5E', ef:'ecto-5′-nucleotidase (CD73; 세포 안은 NT5C 계열)', ec:'3.1.3.5', s:'AMP + H₂O', p:'아데노신 + Pi', co:[], loc:'세포 밖 (원형질막)', n:'CD39(ATP·ADP → AMP)와 CD73이 종양 주변에 아데노신을 쌓고, 아데노신은 A2A 수용체로 T 세포를 억제합니다.'},
+    {e:'ADA', ef:'adenosine deaminase', ec:'3.5.4.4', s:'아데노신 + H₂O', p:'이노신 + NH₄⁺', co:['Zn²⁺'], loc:'세포질', n:'결손되면 dATP가 쌓여 RNR을 억제하고 림프구가 죽어 중증복합면역결핍(SCID)이 됩니다. 최초의 유전자 치료 대상 질환입니다.'},
+    {e:'PNP', ef:'purine nucleoside phosphorylase', ec:'2.4.2.1', s:'이노신 + Pi', p:'하이포잔틴 + 리보스-1-인산', co:[], loc:'세포질', n:'결손되면 dGTP가 쌓여 T 세포가 줄어듭니다. 구아노신도 구아닌으로 바꿉니다.'},
+    {e:'XDH', dom:'1번째 반응', ef:'xanthine dehydrogenase/oxidase (xanthine oxidoreductase)', ec:'1.17.1.4', s:'하이포잔틴 + H₂O + NAD⁺ (산화효소형은 O₂)', p:'잔틴 + NADH (산화효소형은 H₂O₂)', co:['몰리브덴','FAD','Fe-S'], loc:'세포질 (간 · 장)', n:'allopurinol(대사물 oxypurinol)과 febuxostat이 억제합니다.'},
+    {e:'XDH', dom:'2번째 반응', ef:'같은 효소의 두 번째 산화', ec:'1.17.1.4', s:'잔틴 + H₂O + NAD⁺', p:'요산 + NADH', co:['몰리브덴','FAD'], loc:'세포질 (간 · 장)', n:'요산은 물에 잘 안 녹아 관절에 결정(통풍)이나 신장 결석을 만듭니다. 항암치료 후 종양용해증후군에서는 rasburicase(재조합 요산산화효소)를 씁니다.'}
+  ],
+  side:[
+    {e:'ENTPD1', ef:'ectonucleoside triphosphate diphosphohydrolase 1 (CD39)', ec:'3.6.1.5', s:'세포 밖 ATP · ADP', p:'AMP', co:['Ca²⁺ · Mg²⁺'], loc:'원형질막 (세포 밖)', n:'죽는 세포가 내놓은 ATP(염증 신호)를 면역억제성 아데노신 쪽으로 돌리는 첫 단계입니다.'},
+    {e:'AMPD1', ef:'AMP deaminase 1 (근육형)', ec:'3.5.4.6', s:'AMP + H₂O', p:'IMP + NH₄⁺', co:[], loc:'근육 세포질', n:'퓨린 뉴클레오타이드 회로: IMP → (ADSS, 아스파르트산) → (ADSL) → AMP를 돌며 푸마르산을 TCA에 보충합니다.'},
+    {e:'GDA', ef:'guanine deaminase', ec:'3.5.4.3', s:'구아닌 + H₂O', p:'잔틴 + NH₄⁺', co:[], loc:'세포질', n:'구아닌 쪽 분해가 잔틴에서 합류합니다.'},
+    {e:'DPYD', ef:'dihydropyrimidine dehydrogenase', ec:'1.3.1.2', s:'우라실 · 티민 + NADPH', p:'디하이드로우라실 · 디하이드로티민', co:['NADPH','FAD · FMN · Fe-S'], loc:'간 세포질', n:'피리미딘 분해의 율속 단계이자 5-FU 분해의 80% 이상을 맡습니다. 결손 보유자는 5-FU·capecitabine에 치명적 독성이 생길 수 있어 투여 전 DPYD 유전형 검사를 권합니다.'},
+    {e:'DPYS · UPB1', ef:'dihydropyrimidinase · β-ureidopropionase', ec:'3.5.2.2 · 3.5.1.6', s:'디하이드로우라실 · 디하이드로티민', p:'β-알라닌 · β-아미노이소부티르산 + NH₄⁺ + CO₂', co:[], loc:'간', n:'고리가 완전히 열려 수용성 산물이 됩니다. β-알라닌은 카르노신의 재료입니다.'},
+    {e:'CDA', ef:'cytidine deaminase', ec:'3.5.4.5', s:'시티딘 + H₂O', p:'우리딘 + NH₄⁺', co:['Zn²⁺'], loc:'세포질', n:'gemcitabine과 cytarabine도 탈아미노화해 불활성화합니다.'},
+    {e:'UPP1', ef:'uridine phosphorylase 1', ec:'2.4.2.3', s:'우리딘 + Pi', p:'우라실 + 리보스-1-인산', co:[], loc:'세포질', n:'포도당이 부족하면 췌장암 세포가 우리딘의 리보스를 해당과정 연료로 씁니다(Nwosu 2023, Nature; Skinner 2023, Nature Metabolism).'}
+  ],
+  notes:['salvage와의 연결: 하이포잔틴·구아닌은 HPRT1이, 아데닌은 APRT가 PRPP와 붙여 다시 뉴클레오타이드로 만듭니다(퓨린 탭). HPRT1이 전혀 없으면 Lesch-Nyhan 증후군으로 요산이 과다 생성됩니다.'],
+  order:[{t:'AMP',f:'adenosine monophosphate'},{t:'아데노신',f:'adenosine'},{t:'이노신',f:'inosine'},{t:'하이포잔틴',f:'hypoxanthine'},{t:'잔틴',f:'xanthine'},{t:'요산',f:'uric acid'}],
+  via:['NT5E / NT5C (− Pi)','ADA (− NH₄⁺)','PNP (+ Pi, − 리보스-1-인산)','XDH','XDH'],
+  quiz:[
+    {q:'사람에서 퓨린 분해의 최종 산물과 그 이유는?', opts:['요산, 요산산화효소(uricase) 유전자가 위유전자라서','알란토인, uricase가 있어서','요소, 요소 회로로 가서','β-알라닌, 고리가 열려서'], ex:'대부분의 포유류는 uricase로 요산을 알란토인으로 바꾸지만 사람과 유인원은 이 유전자를 잃었습니다.'},
+    {q:'allopurinol의 표적은?', opts:['xanthine oxidoreductase (XDH)','ADA','PNP','HPRT1'], ex:'하이포잔틴과 비슷한 구조로 XDH를 막아 요산 생성을 줄입니다. 6-mercaptopurine 분해도 막으므로 함께 쓰면 6-MP 용량을 크게 줄여야 합니다.'},
+    {q:'ADA 결손이 중증복합면역결핍(SCID)을 일으키는 기전은?', opts:['dATP가 쌓여 RNR을 억제하고 림프구 DNA 합성이 멈춘다','아데노신이 부족해진다','요산이 쌓인다','ATP가 고갈된다'], ex:'림프구는 데옥시아데노신 키나제 활성이 높아 dATP가 특히 많이 쌓입니다.'},
+    {q:'5-FU 투여 전 검사를 권하는 유전자는?', opts:['DPYD','TYMS','UGT1A1','HPRT1'], ex:'DPYD 활성이 없으면 5-FU가 분해되지 않아 골수 억제와 점막염이 치명적으로 심해질 수 있습니다. UGT1A1은 irinotecan 쪽입니다.'},
+    {q:'종양 미세환경에서 CD39와 CD73이 하는 일은?', opts:['세포 밖 ATP를 아데노신으로 바꿔 T 세포를 억제한다','아데노신을 ATP로 바꾼다','요산을 분해한다','PRPP를 만든다'], ex:'CD39(ATP → AMP) → CD73(AMP → 아데노신) → A2A 수용체. 이 축을 막는 항체·억제제가 임상 시험 중입니다.'},
+    {q:'gemcitabine을 불활성화하는 효소는?', opts:['CDA (cytidine deaminase)','DPYD','ADA','XDH'], ex:'CDA 발현이 높은 종양이나 환자는 gemcitabine 효과가 떨어질 수 있습니다.'},
+    {q:'포도당이 부족한 췌장암 세포가 대신 쓰는 탄소원으로 보고된 것은?', opts:['우리딘의 리보스 (UPP1 경유)','요산','β-알라닌','이노신의 염기'], ex:'UPP1이 우리딘을 우라실과 리보스-1-인산으로 쪼개고, 리보스가 PPP를 거쳐 해당과정에 들어갑니다(Nwosu 2023, Nature; Skinner 2023, Nature Metabolism).'},
+    {q:'퓨린과 피리미딘 분해의 차이로 옳은 것은?', opts:['피리미딘 고리는 완전히 열려 수용성 산물이 되고, 퓨린 고리는 요산으로 남는다','둘 다 요산이 된다','퓨린만 완전히 분해된다','둘 다 고리가 열리지 않는다'], ex:'그래서 통풍 같은 축적 질환은 퓨린 쪽에서만 생깁니다.'}
+  ]
+},
+{
+  id:'mix', grp:'mix', code:'ALL', title:'종합 퀴즈', short:'종합 퀴즈', color:'--m-mix',
+  intro:'스물네 개 경로의 개념 문제와 효소 문제를 섞어 냅니다. 경로를 가로지르는 연결 문제도 들어 있습니다.',
+  quiz:[
+    {q:'세린 한 분자가 퓨린 합성에 줄 수 있는 원자는?', opts:['글리신 몫(C4·C5·N7)과 1탄소 단위 몫(C2 또는 C8)','N1과 N3','C6만','없다'], ex:'세린 → SHMT → 글리신 + 메틸렌-THF. 글리신은 2단계에, 1탄소 단위는 10-포르밀-THF로 바뀌어 3·9단계에 들어갑니다.'},
+    {q:'전자전달계를 억제한 세포의 증식을 되살리는 보충 조합으로 알려진 것은?', opts:['피루브산 + 우리딘','포도당 + 글루타민','세린 + 글리신','콜레스테롤 + 지방산'], ex:'피루브산은 LDH 반응으로 NAD⁺를 재생해 아스파르트산 합성을 돕고, 우리딘은 DHODH를 우회해 피리미딘을 공급합니다. mtDNA가 없는 ρ0 세포의 배양 조건이기도 합니다.'},
+    {q:'아스파르트산이 들어가지 않는 반응은?', opts:['퓨린 2단계 (GARS)','퓨린 7단계 (SAICARS)','IMP → 아데닐로숙신산 (ADSS)','피리미딘 ATCase 단계'], ex:'GARS는 글리신을 씁니다. 아스파르트산은 퓨린 N1, AMP의 6번 아미노기, 피리미딘 N1·C4·C5·C6에 들어갑니다.'},
+    {q:'글루타민 아미드 질소를 쓰지 않는 효소는?', opts:['DHODH','PPAT','CTPS','GMPS'], ex:'PPAT(퓨린 N9), PFAS(N3), CAD-CPS2(피리미딘 N3), CTPS(CTP의 아미노기), GMPS(GMP의 2번 아미노기)가 글루타민을 씁니다. DHODH는 산화 반응입니다.'},
+    {q:'항대사제와 표적의 짝이 틀린 것은?', opts:['메토트렉세이트 – TYMS','5-FU – TYMS','mycophenolic acid – IMPDH','brequinar – DHODH'], ex:'메토트렉세이트의 주 표적은 DHFR입니다(폴리글루탐산 형태는 ATIC·GART도 억제). TYMS를 직접 막는 것은 5-FU(FdUMP)와 pemetrexed입니다.'},
+    {q:'SAM이 높아졌을 때 일어나는 조절의 조합은?', opts:['CBS 활성화 + MTHFR 억제','CBS 억제 + MTHFR 활성화','MAT2A 활성화 + AHCY 억제','DHFR 억제 + TYMS 활성화'], ex:'메틸기가 충분하면 새 메틸-THF를 덜 만들고(MTHFR 억제), 호모시스테인을 황전이로 보냅니다(CBS 활성화).'},
+    {q:'NADPH를 쓰지 않고 오히려 만드는 반응은?', opts:['G6PD','FASN','HMGCR','DHFR'], ex:'G6PD(PPP)는 NADPH를 만듭니다. FASN(팔미트산 1개에 14개), HMGCR(메발론산 1개에 2개), DHFR(1개)은 NADPH를 씁니다.'},
+    {q:'푸마르산을 내놓는 반응이 아닌 것은?', opts:['ASS1 (요소 회로)','ASL (요소 회로)','ADSL (SAICAR → AICAR)','ADSL (아데닐로숙신산 → AMP)'], ex:'ASS1은 아스파르트산을 붙이는 단계이고, 그 탄소 골격을 푸마르산으로 떼어내는 것은 ASL입니다. 퓨린 합성의 ADSL도 같은 논리로 두 번 푸마르산을 냅니다.'},
+    {q:'카바모일인산을 만드는 두 효소의 차이로 옳은 것은?', opts:['CPS1은 미토콘드리아·NH₄⁺·NAG로 활성화, CPS2(CAD)는 세포질·글루타민·PRPP로 활성화','둘 다 세포질에 있다','CPS1은 UTP로 억제된다','CPS2는 요소 회로에 쓰인다'], ex:'CPS1은 요소 회로, CPS2는 피리미딘 합성용입니다. 그런데 KRAS/LKB1 폐암(CPS1 → 피리미딘)과 OTC 결손(카바모일인산 → 오로트산)처럼 두 경로가 섞이는 경우가 있습니다.'},
+    {q:'세포질 acetyl-CoA가 직접 쓰이지 않는 곳은?', opts:['TCA 회로','지방산 합성 (ACC1)','메발론산 경로 (ACAT2)','히스톤 아세틸화'], ex:'TCA 회로는 미토콘드리아 acetyl-CoA를 씁니다. 세포질·핵 acetyl-CoA는 ACLY와 ACSS2가 공급하고 지질 합성과 후성유전에 쓰입니다.'},
+    {q:'해당과정과 포도당신생합성이 동시에 돌지 않게 하는 간의 핵심 신호 분자는?', opts:['과당-2,6-이인산','포도당-6-인산','acetyl-CoA','citrate'], ex:'F2,6BP는 PFK1을 켜고 FBP1을 끕니다. 글루카곤은 PFKFB1을 인산화해 F2,6BP를 낮춥니다.'},
+    {q:'PLP를 보조인자로 쓰지 않는 효소는?', opts:['PFK1','ALAS','glycogen phosphorylase','GPT2 (ALT)'], ex:'PLP는 아미노기 전이, 탈카복실화(ALAS·DDC·GAD), 그리고 glycogen phosphorylase에 쓰입니다. PFK1은 Mg²⁺–ATP만 씁니다.'},
+    {q:'SAM을 메틸 공여체로 쓰지 않는 반응은?', opts:['TH (티로신 → L-DOPA)','PNMT (노르에피네프린 → 에피네프린)','GAMT (크레아틴 합성)','PEMT (PE → PC)'], ex:'TH는 BH4 의존 수산화효소입니다. PNMT·GAMT·PEMT는 모두 SAM을 쓰고 SAH를 냅니다.'},
+    {q:'숙시닐-CoA를 직접 쓰지 않는 반응은?', opts:['citrate synthase','ALAS (헴 합성)','OXCT1 (케톤체 활성화)','SUCLG (기질 수준 인산화)'], ex:'citrate synthase는 acetyl-CoA와 옥살아세트산을 씁니다. 숙시닐-CoA는 헴 합성과 케톤체 이용에도 쓰이는 TCA 중간산물입니다.'},
+    {q:'TPP·리포산·CoA·FAD·NAD⁺ 다섯 보조인자를 모두 쓰는 복합체가 아닌 것은?', opts:['PC (pyruvate carboxylase)','PDH','OGDH','BCKDH'], ex:'α-케토산 탈수소효소 복합체 세 개(PDH, OGDH, BCKDH)가 같은 구조를 공유합니다. PC는 비오틴 효소입니다.'}
+  ]
+}
+];
+
+/* ---------- helpers ---------- */
+const NS='http://www.w3.org/2000/svg';
+function el(tag, props, ...kids){
+  const n=document.createElement(tag);
+  for(const [k,v] of Object.entries(props||{})){
+    if(v===false||v==null) continue;
+    if(k==='class') n.className=v;
+    else if(k==='style') n.setAttribute('style',v);
+    else if(k.startsWith('on')) n.addEventListener(k.slice(2),v);
+    else n.setAttribute(k, v===true?'':v);
+  }
+  for(const k of kids.flat()){ if(k==null||k===false) continue; n.append(k.nodeType?k:document.createTextNode(String(k))); }
+  return n;
+}
+function sv(tag, attrs, ...kids){
+  const n=document.createElementNS(NS,tag);
+  for(const [k,v] of Object.entries(attrs||{})) n.setAttribute(k,v);
+  for(const k of kids.flat()){ if(k==null) continue; n.append(k.nodeType?k:document.createTextNode(String(k))); }
+  return n;
+}
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const store={
+  get(k,d){ try{ const v=localStorage.getItem('bsd:'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem('bsd:'+k, JSON.stringify(v)); }catch(e){} }
+};
+const VIEW_LABEL={map:'경로 지도', order:'순서 맞추기', enzyme:'효소 맞히기', quiz:'개념 퀴즈', atoms:'고리 원자'};
+function viewsFor(m){ if(m.id==='mix') return ['quiz','enzyme']; const v=['map','order','enzyme','quiz']; if(m.ring) v.push('atoms'); return v; }
+const reactions = m => [...(m.steps||[]), ...(m.side||[])].filter(s=>!s.noquiz);
+
+const state={ mod: store.get('mod','ser'), view: store.get('view','map'), hide:false };
+if(!MODS.find(m=>m.id===state.mod)) state.mod='ser';
+
+/* ---------- module switcher ---------- */
+const GROUPS=[{id:'energy',t:'에너지 대사'},{id:'carb',t:'탄수화물'},{id:'lip',t:'지질'},{id:'aa',t:'아미노산 · 질소'},{id:'nuc',t:'뉴클레오타이드 · 1탄소'},{id:'mix',t:'섞어 풀기'}];
+function renderMods(){
+  const nav=document.getElementById('mods'); nav.replaceChildren();
+  GROUPS.forEach(g=>{
+    const btns=el('div',{class:'modrow'});
+    MODS.filter(m=>m.grp===g.id).forEach(m=>{
+      btns.append(el('button',{class:'mod', type:'button', 'aria-pressed': String(m.id===state.mod), style:`--mc:var(${m.color})`, onclick:()=>{ state.mod=m.id; const vs=viewsFor(m); if(!vs.includes(state.view)) state.view=vs[0]; store.set('mod',m.id); store.set('view',state.view); renderMods(); renderModule(); }},
+        el('span',{class:'dot','aria-hidden':'true'}), m.short));
+    });
+    nav.append(el('div',{class:'modgrp'}, el('span',{class:'grplbl'}, g.t), btns));
+  });
+}
+
+function renderModule(){
+  const m=MODS.find(x=>x.id===state.mod);
+  const root=document.getElementById('module');
+  root.style.setProperty('--m', `var(${m.color})`);
+  document.documentElement.style.setProperty('--m', `var(${m.color})`);
+  const vs=viewsFor(m); if(!vs.includes(state.view)) state.view=vs[0];
+  const tabs=el('div',{class:'views', role:'tablist'});
+  vs.forEach(v=>tabs.append(el('button',{class:'view', type:'button', role:'tab', 'aria-selected':String(v===state.view), onclick:()=>{ state.view=v; store.set('view',v); renderModule(); }}, VIEW_LABEL[v])));
+  const body=el('div',{});
+  root.replaceChildren(
+    el('div',{class:'modhead'}, el('h2',{}, el('span',{class:'code'}, m.code), m.title), el('p',{}, m.intro)),
+    tabs, body);
+  ({map:viewMap, order:viewOrder, enzyme:viewEnzyme, quiz:viewQuiz, atoms:viewAtoms})[state.view](body, m);
+}
+
+/* ---------- map ---------- */
+function stepCard(st, m, i){
+  const enz = el('div',{class:'enz'},
+    el('span',{class:'sym'}, st.e),
+    st.dom? el('span',{class:'dom'}, st.dom):null,
+    el('span',{class:'full'}, st.ef),
+    st.ec? el('span',{class:'ec'}, /^\d/.test(st.ec)?'EC '+st.ec:st.ec):null);
+  let enzSlot = enz;
+  if(state.hide){
+    const btn = el('button',{class:'reveal', type:'button', onclick:()=>btn.replaceWith(enz)}, '효소 보기');
+    enzSlot = btn;
+  }
+  const chips = el('div',{class:'chips'},
+    (st.co||[]).map(c=>el('span',{class:'chip'}, c)),
+    st.loc? el('span',{class:'chip loc'}, st.loc):null,
+    st.atoms? el('span',{class:'chip atom'}, st.atoms):null);
+  return el('div',{class:'card'},
+    el('div',{class:'rx'}, el('span',{}, st.s), el('span',{class:'arrow','aria-hidden':'true'}, '→'), el('span',{}, st.p)),
+    enzSlot, chips, st.n? el('p',{class:'note'}, st.n):null);
+}
+function viewMap(root, m){
+  const sw = el('label',{class:'switch'}, el('input',{type:'checkbox', id:'hide-enz', checked: state.hide||false, onchange:e=>{ state.hide=e.target.checked; renderModule(); }}), '효소 이름 가리기');
+  root.append(
+    el('div',{class:'keys'}, el('h3',{}, '외울 것'), el('ul',{}, m.keys.map(k=>el('li',{},k)))),
+    el('div',{class:'toolbar'}, el('span',{class:'hint'}, '번호는 실제 반응 순서입니다. 가리기를 켜고 효소를 떠올린 뒤 눌러 확인하세요.'), sw));
+  const ol = el('ol',{class:'rail'});
+  m.steps.forEach((st,i)=>{
+    const no = st.no!=null? st.no : (m.steps[0].no===0? i : i+1);
+    ol.append(el('li',{class:'step'}, el('div',{class:'num','aria-label':`${no}단계`}, String(no)), stepCard(st,m,i)));
+  });
+  root.append(ol);
+  if(m.side && m.side.length){
+    root.append(el('h3',{class:'sec'}, '곁가지와 연결'));
+    root.append(el('div',{class:'side'}, m.side.map(st=>stepCard(st,m))));
+  }
+  (m.notes||[]).forEach(t=>root.append(el('p',{class:'notes'}, t)));
+}
+
+/* ---------- order drill ---------- */
+function viewOrder(root, m){
+  let placed=0, mistakes=0, hint=false;
+  const poolIdx = shuffle(m.order.map((_,i)=>i));
+  const seqList=el('ol',{class:'seq'}), pool=el('div',{class:'pool'}), status=el('p',{class:'status'});
+  const hintBtn=el('button',{class:'btn', type:'button', onclick:()=>{ hint=true; draw(); }}, '힌트: 다음 효소');
+  const again=el('button',{class:'btn', type:'button', onclick:()=>{ root.replaceChildren(); viewOrder(root,m); }}, '다시 섞기');
+  function draw(){
+    seqList.replaceChildren();
+    if(placed===0) seqList.append(el('li',{class:'empty'}, '오른쪽에서 출발 물질을 고르세요.'));
+    for(let i=0;i<placed;i++){
+      if(i>0) seqList.append(el('li',{class:'via'}, '↓ '+m.via[i-1]));
+      const o=m.order[i];
+      seqList.append(el('li',{class:'met'}, el('div',{class:'t'}, o.t), el('div',{class:'f'}, o.f)));
+    }
+    if(hint && placed>0 && placed<m.order.length) seqList.append(el('li',{class:'via'}, '↓ '+m.via[placed-1]+' …'));
+    pool.replaceChildren();
+    poolIdx.filter(i=>i>=placed).forEach(i=>{
+      const o=m.order[i];
+      const b=el('button',{class:'tok', type:'button', onclick:()=>{
+        if(i===placed){ placed++; hint=false; draw(); }
+        else { mistakes++; b.classList.add('shake'); setTimeout(()=>b.classList.remove('shake'),450); status.textContent=`틀린 선택 ${mistakes}회 · ${placed}/${m.order.length}`; }
+      }}, el('span',{class:'t'}, o.t), el('span',{class:'f'}, o.f));
+      pool.append(b);
+    });
+    const done = placed===m.order.length;
+    status.className='status'+(done?' done':'');
+    status.textContent = done? `완성. 틀린 선택 ${mistakes}회` : `틀린 선택 ${mistakes}회 · ${placed}/${m.order.length}`;
+    hintBtn.hidden = done || placed===0;
+    if(done){ const best=store.get('order:'+m.id,null); if(best==null||mistakes<best) store.set('order:'+m.id,mistakes); }
+  }
+  const best=store.get('order:'+m.id,null);
+  root.append(
+    el('div',{class:'toolbar'}, el('span',{class:'hint'}, `대사물을 반응 순서대로 누르세요. 맞으면 왼쪽에 쌓이고 사이에 효소가 나타납니다.${best!=null?` 최소 실수 기록 ${best}회.`:''}`)),
+    el('div',{class:'order'},
+      el('div',{class:'panel'}, el('h4',{}, '내가 만든 경로'), seqList, el('div',{class:'qnav'}, status)),
+      el('div',{class:'panel'}, el('h4',{}, '남은 대사물'), pool, el('div',{class:'qnav'}, hintBtn, again))));
+  draw();
+}
+
+/* ---------- quiz engine ---------- */
+function runQuiz(root, items, key, limit){
+  let order, idx, score;
+  function start(){ order=shuffle(items.map((_,i)=>i)); if(limit) order=order.slice(0,limit); idx=0; score=0; draw(); }
+  function draw(){
+    root.replaceChildren();
+    if(idx>=order.length){
+      const best=Math.max(store.get(key,0), score); store.set(key,best);
+      root.append(el('div',{class:'qcard result'},
+        el('p',{class:'big'}, `${score} / ${order.length}`),
+        el('p',{class:'muted'}, `이 세트 최고 기록 ${best} / ${order.length}`),
+        el('div',{class:'qnav'}, el('button',{class:'btn primary', type:'button', onclick:start}, '다시 풀기'))));
+      return;
+    }
+    const it=items[order[idx]];
+    const choices=shuffle(it.opts.map((t,i)=>({t, ok:i===(it.a||0)})));
+    const exp=el('div',{class:'explain', hidden:true});
+    const next=el('button',{class:'btn primary', type:'button', hidden:true, onclick:()=>{ idx++; draw(); }}, idx===order.length-1?'결과 보기':'다음 문제');
+    const list=el('div',{class:'opts'});
+    let answered=false;
+    choices.forEach((c,ci)=>{
+      const b=el('button',{class:'opt', type:'button', onclick:()=>{
+        if(answered) return; answered=true;
+        if(c.ok) score++;
+        [...list.children].forEach((bb,j)=>{ bb.disabled=true; if(choices[j].ok) bb.classList.add('ok'); });
+        if(!c.ok) b.classList.add('bad');
+        exp.replaceChildren(el('strong',{}, c.ok?'정답. ':'오답. '), it.ex);
+        exp.classList.toggle('is-bad', !c.ok); exp.hidden=false; next.hidden=false; next.focus();
+      }}, c.t);
+      list.append(b);
+    });
+    root.append(el('div',{class:'qcard'},
+      el('div',{class:'qmeta'}, el('span',{}, `${idx+1} / ${order.length}`), el('span',{}, `맞힌 수 ${score}`), it.tag? el('span',{class:'tag'}, it.tag):null),
+      it.rx? el('p',{class:'rxq'}, it.rx):null,
+      el('p',{class:'q'}, it.q), list, exp, el('div',{class:'qnav'}, next)));
+  }
+  start();
+}
+function stem(e){ const t=e.match(/^[A-Za-z0-9]+/); return (t?t[0]:e).slice(0,4).toUpperCase(); }
+function enzymeItems(mods){
+  const allNames=[...new Set(MODS.flatMap(reactions).map(s=>s.e))];
+  return mods.flatMap(m=>reactions(m).map(st=>{
+    const bad = n => n===st.e || stem(n)===stem(st.e);
+    const same = shuffle([...new Set(reactions(m).map(x=>x.e))].filter(n=>!bad(n)));
+    const other = shuffle(allNames.filter(n=>!bad(n) && !same.includes(n)));
+    const d=[...same.slice(0,2), ...other].filter((v,i,a)=>a.indexOf(v)===i);
+    const pick=[...d, ...same.slice(2)].filter((v,i,a)=>a.indexOf(v)===i).slice(0,3);
+    return { rx:`${st.s}  →  ${st.p}`, q:'이 반응을 촉매하는 효소는?', opts:[st.e, ...pick], a:0,
+      ex:`${st.e}${st.dom?' ('+st.dom+')':''}: ${st.ef}.${st.n?' '+st.n:''}`, tag:m.short };
+  }));
+}
+function viewEnzyme(root, m){
+  const items = m.id==='mix' ? enzymeItems(MODS.filter(x=>x.steps)) : enzymeItems([m]);
+  const best=store.get('enz:'+m.id,null);
+  root.append(el('div',{class:'toolbar'}, el('span',{class:'hint'}, `반응을 보고 효소를 고릅니다. 경로 지도와 곁가지 반응이 모두 나옵니다${m.id==='mix'?' (무작위 12문제)':''}.${best!=null?` 최고 기록 ${best}개.`:''}`)));
+  const box=el('div',{}); root.append(box);
+  runQuiz(box, items, 'enz:'+m.id, m.id==='mix'?12:0);
+}
+function viewQuiz(root, m){
+  let items = m.quiz.map(q=>({...q, tag: m.id==='mix'?'연결':null}));
+  if(m.id==='mix') items = [...items, ...MODS.filter(x=>x.id!=='mix').flatMap(x=>x.quiz.map(q=>({...q, tag:x.short})))];
+  const best=store.get('quiz:'+m.id,null);
+  root.append(el('div',{class:'toolbar'}, el('span',{class:'hint'}, `${m.id==='mix'?'연결 문제와 모든 경로 문제를 섞어 12문제를 냅니다.':'선택지는 매번 섞입니다.'}${best!=null?` 최고 기록 ${best}개.`:''}`)));
+  const box=el('div',{}); root.append(box);
+  runQuiz(box, items, 'quiz:'+m.id, m.id==='mix'?12:0);
+}
+
+/* ---------- ring atoms ---------- */
+const RINGS={
+  pur:{ view:'0 0 300 236', label:'IMP의 퓨린 고리 (골격만 표시)',
+    atoms:[
+      {id:'N1', x:66.7, y:90, src:'asp', why:'7단계 PAICS(SAICAR synthetase): 아스파르트산의 아미노 질소. 탄소 골격은 8단계에서 푸마르산으로 떠납니다.'},
+      {id:'C2', x:66.7, y:140, src:'fthf', why:'9단계 ATIC(AICAR transformylase): 10-포르밀-THF의 포르밀 탄소.'},
+      {id:'N3', x:110, y:165, src:'gln', why:'4단계 PFAS: 글루타민의 아미드 질소.'},
+      {id:'C4', x:153.3, y:140, src:'gly', why:'2단계 GARS: 글리신의 카복실 탄소.'},
+      {id:'C5', x:153.3, y:90, src:'gly', why:'2단계 GARS: 글리신의 α-탄소.'},
+      {id:'C6', x:110, y:65, src:'co2', why:'6단계 PAICS(AIR carboxylase): CO₂. 사람 효소는 ATP 없이 붙입니다.'},
+      {id:'N7', x:200.8, y:74.6, src:'gly', why:'2단계 GARS: 글리신의 아미노 질소.'},
+      {id:'C8', x:230.2, y:115, src:'fthf', why:'3단계 GART(transformylase): 10-포르밀-THF의 포르밀 탄소.'},
+      {id:'N9', x:200.8, y:155.4, src:'gln', why:'1단계 PPAT: 글루타민의 아미드 질소가 PRPP의 C1′에 붙습니다. 리보스가 붙는 자리입니다.'}
+    ],
+    bonds:[['C6','N1'],['N1','C2'],['C2','N3'],['N3','C4'],['C4','C5'],['C5','C6'],['C5','N7'],['N7','C8'],['C8','N9'],['N9','C4']],
+    extra: g=>{ g.append(sv('line',{class:'stub', x1:200.8, y1:155.4, x2:222, y2:196})); g.append(sv('text',{class:'lbl', x:200, y:214}, '리보스-5′-인산')); g.append(sv('line',{class:'stub', x1:110, y1:65, x2:110, y2:30})); g.append(sv('text',{class:'lbl', x:118, y:30}, '=O (IMP)')); }
+  },
+  pyr:{ view:'0 0 250 236', label:'UMP의 피리미딘 고리 (골격만 표시)',
+    atoms:[
+      {id:'N1', x:120, y:155, src:'asp', why:'2단계 ATCase: 아스파르트산의 아미노 질소. 5단계에서 이 질소에 리보스가 붙습니다.'},
+      {id:'C2', x:76.7, y:130, src:'co2', why:'1단계 CPS2: 중탄산(HCO₃⁻)의 탄소가 카바모일인산의 카보닐 탄소가 됩니다.'},
+      {id:'N3', x:76.7, y:80, src:'gln', why:'1단계 CPS2: 글루타민의 아미드 질소가 카바모일인산의 질소가 됩니다.'},
+      {id:'C4', x:120, y:55, src:'asp', why:'2단계 ATCase: 아스파르트산의 곁사슬(β) 카복실 탄소.'},
+      {id:'C5', x:163.3, y:80, src:'asp', why:'2단계 ATCase: 아스파르트산의 β-탄소.'},
+      {id:'C6', x:163.3, y:130, src:'asp', why:'2단계 ATCase: 아스파르트산의 α-탄소. 여기 붙어 있던 α-카복실기는 6단계 ODC에서 CO₂로 떠납니다.'}
+    ],
+    bonds:[['N1','C2'],['C2','N3'],['N3','C4'],['C4','C5'],['C5','C6'],['C6','N1']],
+    extra: g=>{ g.append(sv('line',{class:'stub', x1:120, y1:155, x2:120, y2:196})); g.append(sv('text',{class:'lbl', x:84, y:214}, '리보스-5′-인산')); }
+  }
+};
+function viewAtoms(root, m){
+  const R=RINGS[m.ring];
+  const byId=Object.fromEntries(R.atoms.map(a=>[a.id,a]));
+  let queue=shuffle(R.atoms.map(a=>a.id)), cur=0, right=0;
+  const done=new Map();
+  const svg=sv('svg',{viewBox:R.view, role:'img', 'aria-label':R.label});
+  const g=sv('g',{}); svg.append(g);
+  R.bonds.forEach(([a,b])=>g.append(sv('line',{class:'bond', x1:byId[a].x, y1:byId[a].y, x2:byId[b].x, y2:byId[b].y})));
+  R.extra(g);
+  const nodes={};
+  R.atoms.forEach(a=>{
+    const c=sv('circle',{cx:a.x, cy:a.y, r:16});
+    const t=sv('text',{x:a.x, y:a.y+4.5, 'text-anchor':'middle'}, a.id);
+    const gg=sv('g',{class:'atom', tabindex:'0', role:'button', 'aria-label':a.id},  c, t);
+    gg.addEventListener('click',()=>{ if(done.has(a.id)) showWhy(a.id); else { cur=queue.indexOf(a.id); draw(); } });
+    gg.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); gg.dispatchEvent(new Event('click')); } });
+    nodes[a.id]={g:gg,c};
+    g.append(gg);
+  });
+  const panel=el('div',{class:'atompanel'});
+  const prompt=el('p',{class:'prompt'});
+  const srcs=el('div',{class:'srcs'});
+  const exp=el('div',{class:'explain', hidden:true});
+  const status=el('p',{class:'status'});
+  const ctrl=el('div',{class:'qnav'},
+    el('button',{class:'btn', type:'button', onclick:()=>{ R.atoms.forEach(a=>done.set(a.id,true)); draw(); prompt.textContent='전체 지도입니다. 원자를 누르면 설명이 나옵니다.'; srcs.replaceChildren(); }}, '모두 보기'),
+    el('button',{class:'btn', type:'button', onclick:()=>{ root.replaceChildren(); viewAtoms(root,m); }}, '다시 하기'));
+  const legend=el('div',{class:'legend'}, Object.entries(SRC).map(([k,s])=>el('span',{}, el('i',{style:`background:var(${s.v})`}), s.t)));
+  function paint(){
+    R.atoms.forEach(a=>{
+      const n=nodes[a.id]; const isDone=done.has(a.id);
+      n.g.classList.toggle('done', isDone);
+      n.g.classList.toggle('cur', !isDone && queue[cur]===a.id);
+      n.c.style.fill = isDone? `var(${SRC[a.src].v})` : '';
+    });
+  }
+  function showWhy(id){ const a=byId[id]; exp.className='explain'; exp.replaceChildren(el('strong',{}, `${id} ← ${SRC[a.src].t}. `), a.why); exp.hidden=false; }
+  function nextOpen(){ const rest=queue.filter(id=>!done.has(id)); return rest.length? queue.indexOf(rest[0]) : -1; }
+  function draw(){
+    paint();
+    const remaining=R.atoms.length-done.size;
+    status.textContent = remaining? `맞힌 원자 ${right} · 남은 원자 ${remaining}` : `완료. ${R.atoms.length}개 중 첫 시도에 ${right}개 정답`;
+    status.className='status'+(remaining?'':' done');
+    if(!remaining){ prompt.textContent='고리 완성. 원자를 누르면 설명을 다시 볼 수 있습니다.'; srcs.replaceChildren(); return; }
+    if(done.has(queue[cur])) cur=nextOpen();
+    const id=queue[cur];
+    prompt.replaceChildren('이 원자는 어디서 왔을까요? ', el('b',{}, id));
+    srcs.replaceChildren();
+    let tried=false;
+    Object.entries(SRC).forEach(([k,s])=>{
+      const b=el('button',{class:'src', type:'button', onclick:()=>{
+        const a=byId[id];
+        if(k===a.src){ if(!tried) right++; b.classList.add('ok'); done.set(id,true); [...srcs.children].forEach(x=>x.disabled=true); showWhy(id); setTimeout(draw, 650); paint(); }
+        else { tried=true; b.classList.add('bad'); b.disabled=true; exp.className='explain is-bad'; exp.replaceChildren(el('strong',{}, '아닙니다. '), '다른 출처를 골라 보세요.'); exp.hidden=false; }
+      }}, el('span',{class:'sw', style:`background:var(${s.v})`}), s.t);
+      srcs.append(b);
+    });
+  }
+  panel.append(prompt, srcs, exp, status, ctrl, legend);
+  root.append(
+    el('div',{class:'toolbar'}, el('span',{class:'hint'}, '강조된 원자의 출처를 고르세요. 원자를 직접 눌러 순서를 바꿀 수도 있습니다.')),
+    el('div',{class:'atoms'}, el('div',{class:'ringbox'}, svg), panel));
+  draw();
+}
+
+renderMods(); renderModule();
+</script>
+
+<div class="offline-badge" id="offline-badge" hidden>오프라인 사용 가능</div>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    function ready(){ var b=document.getElementById('offline-badge'); b.hidden=false; setTimeout(function(){ b.hidden=true; }, 2500); }
+    if (navigator.serviceWorker.controller) return;
+    (reg.installing||reg.waiting||reg.active) && navigator.serviceWorker.ready.then(ready);
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>
